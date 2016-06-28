@@ -1,0 +1,24 @@
+{
+    "manifest_version": 2,
+    "name": "Falcon",
+    "description": "To activate, type 'f' followed by a tab or space into the Omnibox. Then enter your term and press enter to submit.",
+    "version": "0.1",
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": ["js/content.js"]
+        }
+    ],
+    "permissions": [
+        "<all_urls>",
+    ],
+    "browser_action": {
+        "default_icon": "icon.png"
+    },
+    "omnibox": { "keyword" : "f" }
+    "background": {
+        "scripts": ["js/jquery-3.0.0.min.js", "js/background.js"]
+    }
+}
