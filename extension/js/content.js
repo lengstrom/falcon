@@ -6,7 +6,7 @@
         "name":'pageContent',
         "time":epochTime,
         "url":url,
-        "html":document.documentElement.innerHTML,
+        "html":document.body.innerText,
         "title":document.title,
     });
 })();
