@@ -13,6 +13,8 @@
     ],
     "permissions": [
         "<all_urls>",
+        "storage",
+        "unlimitedStorage"
     ],
     "browser_action": {
         "default_icon": "icon.png"

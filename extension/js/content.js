@@ -3,10 +3,10 @@
     var url = window.location.href;
 
     chrome.runtime.sendMessage({
-        "name":'pageContent',
+        "msg":'pageContent',
         "time":epochTime,
         "url":url,
-        "html":document.body.innerText,
+        "text":document.body.innerText,
         "title":document.title,
     });
 })();
