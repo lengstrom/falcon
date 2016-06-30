@@ -27,7 +27,9 @@ chrome.runtime.onMessage.addListener(function(data, sender, sendRespones) {
         data.text = processPageText(data.text);
 
         var time = data.time
-        chrome.storage.local.set({time:data}, function() {
+        var keyValue = {}
+        keyValue[time] = data;
+        chrome.storage.local.set(keyValue, function() {
             console.log("Stored: " + data.title);
         });
     }
@@ -50,6 +52,8 @@ function makeSuggestions(query, cb) {
                 suggestions.push({'url':obj.url, 'description':obj.title});
             }
         }
+
+        debugger;
 
         cb(suggestions);
     })
