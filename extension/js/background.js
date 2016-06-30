@@ -59,8 +59,6 @@ function makeSuggestions(query, cb) {
             }
         }
 
-        debugger;
-
         cb(suggestions);
     })
 }
