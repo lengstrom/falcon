@@ -20,18 +20,22 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
 // chrome.omnibox.onInputEntered.addListener(function(url) {
 //     navigate(url);
 // });
-
 chrome.runtime.onMessage.addListener(function(data, sender, sendRespones) {
     // data is from message
-    if (data.msg === 'pageContent') {
+    if (data.msg === 'pageContent' && shouldArchive(data)) {
         delete data.msg
         data.text = processPageText(data.text);
 
-        chrome.storage.local.set({data.time:data}, function(){
+        var time = data.time
+        chrome.storage.local.set({time:data}, function() {
             console.log("Stored: " + data.title);
         });
     }
 });
+
+function shouldArchive(data) {
+    return true;
+}
 
 function processPageText(str) {
     return str.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
@@ -42,7 +46,7 @@ function makeSuggestions(query, cb) {
         var suggestions = [];
         for (var key in items) {
             var obj = items[key];
-            if (obj.indexOf(query) > -1) {
+            if (obj.text.indexOf(query) > -1) {
                 suggestions.append({'url':obj.url, 'description':obj.title});
             }
         }
