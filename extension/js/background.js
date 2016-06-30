@@ -55,7 +55,7 @@ function makeSuggestions(query, cb) {
         for (var key in items) {
             var obj = items[key];
             if (obj.text.indexOf(query) > -1) {
-                suggestions.push({'url':obj.url, 'description':obj.title});
+                suggestions.push(obj);
             }
         }
 
