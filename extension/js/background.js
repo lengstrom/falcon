@@ -35,7 +35,13 @@ chrome.runtime.onMessage.addListener(function(data, sender, sendRespones) {
     }
 });
 
+var BLACKLIST = ['https://www.google.com/_/chrome/newtab']
+
 function shouldArchive(data) {
+    for (var url in BLACKLIST) {
+        if (data.url.indexOf(url) > -1) return false;
+    }
+
     return true;
 }
 
