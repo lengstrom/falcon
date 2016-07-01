@@ -23,11 +23,11 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
 chrome.runtime.onMessage.addListener(function(data, sender, sendRespones) {
     // data is from message
     if (data.msg === 'pageContent' && shouldArchive(data)) {
-        delete data.msg
+        delete data.msg;
         data.text = processPageText(data.text);
 
-        var time = data.time
-        var keyValue = {}
+        var time = data.time;
+        var keyValue = {};
         keyValue[time] = data;
         chrome.storage.local.set(keyValue, function() {
             console.log("Stored: " + data.title);
@@ -35,7 +35,7 @@ chrome.runtime.onMessage.addListener(function(data, sender, sendRespones) {
     }
 });
 
-var BLACKLIST = ['https://www.google.com/_/chrome/newtab']
+var BLACKLIST = ['https://www.google.com/_/chrome/newtab'];
 
 function shouldArchive(data) {
     for (var url in BLACKLIST) {
