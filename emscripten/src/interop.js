@@ -1,4 +1,4 @@
-var ALPHABETLENGTH = 123;
+var ALPHABETLENGTH = 256;
 var buildBMSTable = _buildBMSTable;
 var BMSMatch = _BMSMatch
 

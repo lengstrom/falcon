@@ -1,102 +1,3 @@
-function assert(condition, message) {
-    if (!condition) {
-        throw message || "Assertion failed";
-    }
-}
-
-chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
-    makeSuggestions(text, function(suggestions) {
-        var res = [];
-        var i;
-        for (i = 0; i < suggestions.length; i++) {
-            var elem = suggestions[i];
-            var description = "<url>" + escape(elem.url) + "</url> - " + escape(elem.title);
-            res.push({content:elem.url, description:description});
-        }
-
-        suggest(res);
-    });
-});
-
-// chrome.omnibox.onInputEntered.addListener(function(url) {
-//     navigate(url);
-// });
-chrome.runtime.onMessage.addListener(function(data, sender, sendRespones) {
-    // data is from message
-    if (data.msg === 'pageContent' && shouldArchive(data)) {
-        delete data.msg;
-        data.text = processPageText(data.text);
-
-        var time = data.time;
-        var keyValue = {};
-        keyValue[time] = data;
-        chrome.storage.local.set(keyValue, function() {
-            console.log("Stored: " + data.title);
-        });
-    }
-});
-
-var BLACKLIST = ['https://www.google.com/_/chrome/newtab'];
-
-function shouldArchive(data) {
-    for (var url in BLACKLIST) {
-        if (data.url.indexOf(url) > -1) return false;
-    }
-
-    return true;
-}
-
-function processPageText(str) {
-    return removeDiacritics(str).replace('[^a-zA-Z0-9-._~]',"")
-}
-
-function makeSuggestions(query, cb) {
-    chrome.storage.local.get(null, function(items) {
-        var suggestions = [];
-        var i = 0;
-        var arr = [];
-        for (var key in items) {
-            var obj = items[key];
-            if (i % 400 == 0) {
-                
-            }
-            
-            if (obj.text.indexOf(query) > -1) {
-                suggestions.push(obj);
-            }
-        }
-
-        cb(suggestions);
-    });
-}
-
-function escape(str) {
-    var ret = '';
-    var i;
-    for (i = 0; i < str.length; i++) {
-        switch (str.charAt(i)) {
-        case '"':
-            ret += '&quot;';
-            break;
-        case '\'':
-            ret += '&apos;';
-            break;
-        case '<':
-            ret += '&lt;'
-            break;
-        case '>':
-            ret += '&gt;'
-            break;
-        case '&':
-            ret += '&amp;'
-            break;
-        default:
-            ret += str.charAt(i);
-        }
-    }
-    return ret;
-}
-
 function removeDiacritics(str) {
   var defaultDiacriticsRemovalMap = [
     {'base':'A', 'letters':/[\u0041\u24B6\uFF21\u00C0\u00C1\u00C2\u1EA6\u1EA4\u1EAA\u1EA8\u00C3\u0100\u0102\u1EB0\u1EAE\u1EB4\u1EB2\u0226\u01E0\u00C4\u01DE\u1EA2\u00C5\u01FA\u01CD\u0200\u0202\u1EA0\u1EAC\u1EB6\u1E00\u0104\u023A\u2C6F]/g},
@@ -192,3 +93,12 @@ function removeDiacritics(str) {
   return str;
 
 }
+
+function processPageText(str) {
+    return removeDiacritics(str)
+        .replace(/[^0-9a-zA-Z\s]/g, '')
+        .toLowerCase()
+        .replace(/(\r\n|\n|\r)/gm,"");
+}
+
+var frenchRevolution = processPageText("The French Revolution (French: Révolution française [ʁevɔlysjɔ̃ fʁɑ̃sɛːz]) was a period of far-reaching social and political upheaval in France that lasted from 1789 until 1799, and was partially carried forward by Napoleon during the later expansion of the French Empire. The Revolution overthrew the monarchy, established a republic, experienced violent periods of political turmoil, and finally culminated in a dictatorship under Napoleon that rapidly brought many of its principles to Western Europe and beyond. Inspired by liberal and radical ideas, the Revolution profoundly altered the course of modern history, triggering the global decline of absolute monarchies while replacing them with republics and liberal democracies.[1] Through the Revolutionary Wars, it unleashed a wave of global conflicts that extended from the Caribbean to the Middle East. Historians widely regard the Revolution as one of the most important events in human history.[2][3][4] The causes of the French Revolution are complex and are still debated among historians. Following the Seven Years' War and the American Revolutionary War,[5] the French government was deeply in debt and attempted to restore its financial status through unpopular taxation schemes. Years of bad harvests leading up to the Revolution also inflamed popular resentment of the privileges enjoyed by the clergy and the aristocracy. Demands for change were formulated in terms of Enlightenment ideals and contributed to the convocation of the Estates-General in May 1789. The first year of the Revolution saw members of the Third Estate taking control, the assault on the Bastille in July, the passage of the Declaration of the Rights of Man and of the Citizen in August, and a women's march on Versailles that forced the royal court back to Paris in October. A central event of the first stage, in August 1789, was the abolition of feudalism and the old rules and privileges left over from the Ancien Régime. The next few years featured political struggles between various liberal assemblies and right-wing supporters of the monarchy intent on thwarting major reforms. France rapidly transformed into a democratic and secular society with freedom of religion, legalization of divorce, decriminalization of same-sex relationships, and civil rights for Jews and black people.[6] The Republic was proclaimed in September 1792 after the French victory at Valmy. In a momentous event that led to international condemnation, Louis XVI was executed in January 1793. External threats closely shaped the course of the Revolution. The Revolutionary Wars beginning in 1792 ultimately featured French victories that facilitated the conquest of the Italian Peninsula, the Low Countries and most territories west of the Rhine – achievements that had eluded previous French governments for centuries. Internally, popular agitation radicalised the Revolution significantly, culminating in the rise of Maximilien Robespierre and the Jacobins. The dictatorship imposed by the Committee of Public Safety during the Reign of Terror, from 1793 until 1794, established price controls on food and other items, abolished slavery in French colonies abroad, dechristianised society through the creation of a new calendar and the expulsion of religious figures, and secured the borders of the new republic from its enemies. Large numbers of civilians were executed by revolutionary tribunals during the Terror, with estimates ranging from 16,000 to 40,000.[7] After the Thermidorian Reaction, an executive council known as the Directory assumed control of the French state in 1795. The rule of the Directory was characterised by suspended elections, debt repudiations, financial instability, persecutions against the Catholic clergy, and significant military conquests abroad.[8] Dogged by charges of corruption, the Directory collapsed in a coup led by Napoleon Bonaparte in 1799. Napoleon, who became the hero of the Revolution through his popular military campaigns, went on to establish the Consulate and later the First Empire, setting the stage for a wider array of global conflicts in the Napoleonic Wars. The modern era has unfolded in the shadow of the French Revolution. Almost all future revolutionary movements looked back to the Revolution as their predecessor.[9] Its central phrases and cultural symbols, such as La Marseillaise and Liberté, égalité, fraternité, became the clarion call for other major upheavals in modern history, including the Russian Revolution over a century later.[10] The values and institutions of the Revolution dominate French politics to this day. French historian François Aulard comments that:The Revolution consisted in the suppression of what was called the feudal system, in the emancipation of the individual, in greater division of landed property, the abolition of the privileges of noble birth, the establishment of equality, the simplification of life... The French Revolution differed from other revolutions in being not merely national, for it aimed at benefiting all humanity.[11] Globally, the Revolution accelerated the rise of republics and democracies. It became the focal point for the development of all modern political ideologies, leading to the spread of liberalism, radicalism, nationalism, socialism, feminism, and secularism, among many others. The Revolution also witnessed the birth of total war by organizing the resources of France and the lives of its citizens towards the objective of military conquest.[12] Some of its central documents, like the Declaration of the Rights of Man, expanded the arena of human rights to include women and slaves, leading to movements for abolitionism and universal suffrage in the next century.[13]");

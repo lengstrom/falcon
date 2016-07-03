@@ -2,7 +2,7 @@
 #include <string>
 #include <assert.h>
 
-const int ALPHABETLENGTH = 123;
+const int ALPHABETLENGTH = 256;
 
 extern "C" {
     void buildBMSTable(char * pat, int * memo) {
