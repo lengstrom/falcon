@@ -185,5 +185,3 @@ function binarySearch(arr, value, lt, gt, i, j) {
     }
     return binarySearch(arr, value, i, j);
 }
-arr = [ 1, 3, 6, 8, 9, 100 ];
-binarySearch(arr, 5, 0, arr.length)
