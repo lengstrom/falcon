@@ -1,14 +1,16 @@
 var BEFORE = /(\s|^)before:/i;
 var AFTER = /(\s|^)after:/i;
+var NEGATIVE = /(\s|^)-/i;
+var QUOTEREGEX = /["']/;
 var DEFAULT_DATE_OFFSET = 14;
-var PARSERS = [parseDate, parseExact, parseKeywords, normalize];
+var PARSERS = [parseDate, parseNegative, parseExact, parseKeywords, normalize];
 
 var CUTOFF_DATE = new Date();
 CUTOFF_DATE.setDate(CUTOFF_DATE.getDate() - DEFAULT_DATE_OFFSET);
 
 function extractTextBtwChars(i, text) { // i is index of first char
     var ch = text[i];
-    if (!ch.match(/['"]/)) {
+    if (!ch.match(QUOTEREGEX)) {
         ch = " ";
     }
     var next = text.indexOf(ch, i+1);
@@ -22,16 +24,43 @@ function extractTextBtwChars(i, text) { // i is index of first char
 }
 
 function getArgumentForRegex(text, regex) {
+    var textLen = text.length;
+    var quoteMap = new Array(textLen);
+    var currQuote = false;
+    var i = 0;
+    while (i < textLen) {
+        var ch = text[i];
+        if (currQuote == false) {
+            if (ch.match(QUOTEREGEX) != null) {
+                currQuote = ch;
+            }
+        } else {
+            if (ch == currQuote) {
+                currQuote = false;
+            }
+        }
+
+        quoteMap[i] = currQuote == false ? 0 : 1;
+        i += 1;
+    }
+
     var res = text.match(regex);
+    var offset = 0;
+    while (res != null && quoteMap[res.index + 1 + offset] == 1) {
+        offset += res.index + res.length;
+        res = text.substring(offset+1,text.length).match(regex);
+    }
+
+    res.index += offset + 1;
     if (res == null) return [false, false];
 
     var i = res.index + res[0].length;
     while (text[i] == ' ') {i += 1};
-    if (i >= text.length) {
+    if (i >= textLen) {
         return [false, false];
     }
 
-    if (text[i].match(/["']/)) {
+    if (text[i].match(QUOTEREGEX)) {
         var [matched, text] = extractTextBtwChars(i, text);
     } else {
         var [matched, text] = extractTextBtwChars(i-1, text);
@@ -98,6 +127,23 @@ function parseDate(query) {
     return query;
 }
 
+function parseNegative(query) {
+    // chrono.parseDate('An appointment on Sep 12-13')
+    var text = query.text;
+    while (true) {
+        var [match, textTmp] = getArgumentForRegex(text, NEGATIVE);
+        if (match != false) {
+            query.negative.push(match);
+            text = textTmp;
+        } else {
+            break;
+        }
+    }
+
+    query.text = text;
+    return query;
+}
+
 function parseKeywords(query) {
     var text = query.text;
     query.keywords = query.keywords.concat(query.text.trim().split(/\s+/));
@@ -115,6 +161,7 @@ function makeQueryFromText(text) {
         before: false,
         after: CUTOFF_DATE,
         keywords: [],
+        negative:[],
         shouldDate: false // has the date been set 
     }
     
