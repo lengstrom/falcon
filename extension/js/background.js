@@ -1,4 +1,4 @@
-var BLACKLIST = ['https://www.google.com/_/chrome/newtab'];
+var BLACKLIST = [/https\:\/\/www\.google\.com\/\_\/chrome\/newtab.*/];
 var LT = function(a,b) {return a < b};
 var GT = function(a,b) {return a > b};
 var LT_OBJ = function(a,b) {
@@ -109,7 +109,7 @@ function omnibarHandler(text, suggest) {
 
 function shouldArchive(data) {
     for (var url in BLACKLIST) {
-        if (data.url.indexOf(url) > -1) return false;
+        if (data.url.match(url) != null) return false;
     }
 
     return true;
