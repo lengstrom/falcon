@@ -27,6 +27,10 @@ function getArgumentForRegex(text, regex) {
 
     var i = res.index + res[0].length;
     while (text[i] == ' ') {i += 1};
+    if (i >= text.length) {
+        return [false, false];
+    }
+
     if (text[i].match(/["']/)) {
         var [matched, text] = extractTextBtwChars(i, text);
     } else {

@@ -11,7 +11,6 @@ var GT_OBJ = function(a,b) {
 
 var MIN_KEYWORD_LEN = 4;
 var MIN_COMPONENT_KEYWORD_LEN = 3;
-var MAX_MEM = 100000000; // bytes
 
 Array.max = function( array ){
     return Math.max.apply(Math,array);
@@ -124,7 +123,7 @@ function makeSuggestions(keywords, candidates, cb) {
     var urls = {};
     var keywordsLen = keywords.length;
     var j = 0;
-    for (var i = ; i < candidates.length; i++) {
+    for (var i = candidates.length - 1; i > -1; i--) {
         var text = candidates[i].text;
         var isMatching = true;
         for (var k = 0; k < keywordsLen; k++) {
@@ -152,7 +151,7 @@ function dispatchSuggestions(text, cb) {
     query.text = text;
     if (query.before !== false && query.after !== false && query.after >= query.before) return;
 
-    if (Array.max(query.keywords.map(function(x){x.length})) < MIN_KEYWORD_LEN) {
+    if (Array.max(query.keywords.map(function(x){return x.length})) < MIN_KEYWORD_LEN) {
         return;
     }
 
