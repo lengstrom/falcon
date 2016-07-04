@@ -28,14 +28,11 @@ function init() {
 
                 timeIndex.sort(function(a,b) {return a.time - b.time}); // soonest last
                 makePreloaded(timeIndex);
+                chrome.storage.local.set('index':timeIndex);
             });
 
         } else {
             makePreloaded(timeIndex);
-        }
-
-        for (var key in items) {
-            
         }
     });
 }
@@ -73,16 +70,24 @@ function handleMessage(data, sender, sendRespones) {
 
         timeIndex.append(time);
         preloaded.append(data);
+        chrome.storage.local.set('index':timeIndex);
     }
 }
 
 function omnibarHandler(text, suggest) {
-    dispatchSuggestions(text, function(suggestions) {
+    dispatchSuggestions(text, function(suggestions, shouldDate) {
         var res = [];
         var i;
         for (i = 0; i < suggestions.length; i++) {
             var elem = suggestions[i];
-            var description = "<url>" + escape(elem.url) + "</url> - " + escape(elem.title);
+            var description = "<url>" + escape(elem.url) + "</url> "
+            if (shouldDate) {
+                var date = new Date(elem.time);
+                var fmt = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getUTCFullYear().toString().substring(2,4);
+                description += ' on <match>' + escape(fmt) + '</match> ';
+            }
+
+            description += '- ' + escape(elem.title);
             res.push({content:elem.url, description:description});
         }
 

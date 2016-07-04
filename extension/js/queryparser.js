@@ -84,6 +84,7 @@ function parseDate(query) {
             var date = chrono.parseDate(match);
             if (date != null) {
                 query[arg] = date;
+                query.shouldDate = true;
             }
         }
     }
@@ -108,7 +109,8 @@ function makeQueryFromText(text) {
         text:text,
         before: false,
         after: CUTOFF_DATE,
-        keywords: []
+        keywords: [],
+        shouldDate: false // has the date been set 
     }
     
     function reducer(prev, curr, index, arr) {
