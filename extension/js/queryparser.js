@@ -46,9 +46,17 @@ function getArgumentForRegex(text, regex) {
 
     var res = text.match(regex);
     var offset = 0;
-    while (res != null && quoteMap[res.index + 1 + offset] == 1) {
+    var pos;
+    if (res != null) {
+        pos = res.index;
+    } else {
+        pos = 0;
+    }
+
+    while (res != null && quoteMap[pos] == 1) {
         offset += res.index + res.length;
         res = text.substring(offset+1,text.length).match(regex);
+        pos = res.index + 1 + offset
     }
 
     if (res == null) return [false, false];
