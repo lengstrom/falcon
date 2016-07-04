@@ -51,8 +51,8 @@ function getArgumentForRegex(text, regex) {
         res = text.substring(offset+1,text.length).match(regex);
     }
 
-    res.index += offset + 1;
     if (res == null) return [false, false];
+    if (offset > 0) res.index += offset + 1;
 
     var i = res.index + res[0].length;
     while (text[i] == ' ') {i += 1};

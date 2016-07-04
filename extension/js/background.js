@@ -60,8 +60,6 @@ function makePreloaded(index) {
 
         preloaded.sort(function(a,b){return a.time-b.time});
     });
-
-    
 }
 
 function assert(condition, message) {
