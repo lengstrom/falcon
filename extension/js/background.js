@@ -1,5 +1,6 @@
 var BLACKLIST = [/https\:\/\/www\.google\.com\/\_\/chrome\/newtab.*/];
 var MILLIS_BEFORE_CLEAR = 1000 * 60; // 60 seconds
+var CLEAR_DELAY = 20000;
 var LT = function(a,b) {return a < b};
 var GT = function(a,b) {return a > b};
 var LT_OBJ = function(a,b) {
@@ -21,6 +22,7 @@ chrome.runtime.onMessage.addListener(handleMessage);
 
 function init() {
     window.preloaded = [];
+    window.cache = {};
     chrome.storage.local.get('index', function(items) {
         var obj = items['index'];
         if (obj === undefined) {
@@ -104,7 +106,19 @@ function omnibarHandler(text, suggest) {
         }
 
         suggest(res);
+        window.setTimeout(clearCache, CLEAR_DELAY);
     });
+}
+
+function clearCache() {
+    return;
+    var now = +(new Date());
+    
+    for (var time in cache) {
+        if (now - parseInt(time) > MILLIS_BEFORE_CLEAR) {
+            delete cache[time];
+        } 
+    }
 }
 
 function shouldArchive(data) {
