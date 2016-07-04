@@ -9,10 +9,13 @@ var GT_OBJ = function(a,b) {
     return a.time > b.time;
 }
 
+var MIN_KEYWORD_LEN = 4;
+var MIN_COMPONENT_KEYWORD_LEN = 3;
+var MAX_MEM = 100000000; // bytes
+
 
 chrome.omnibox.onInputChanged.addListener(omnibarHandler);
 chrome.runtime.onMessage.addListener(handleMessage);
-MAX_MEM = 100000000; // bytes
 
 function init() {
     window.preloaded = [];
@@ -110,23 +113,20 @@ function makeSuggestions(keywords, candidates, cb) {
     for (var i = 0; i < candidates.length; i++) {
         var text = candidates[i].text;
         for (var i = 0; i < keywordsLen; i++) {
-            if (text.indexOf(keywordsLen[i]) == -1) {
+            if (text.indexOf(keywordsLen[i]) === -1) {
                 break;
             }
         }
 
         res.append(candidates[i]);
         j += 1;
-        if (j == 5) {
+        if (j === 5) {
             break;
         }
     }
 
     cb(res);
 }
-
-MIN_KEYWORD_LEN = 4;
-MIN_COMPONENT_KEYWORD_LEN = 3;
 
 function dispatchSuggestions(text, cb) {
     var query = makeQueryFromText(text);
