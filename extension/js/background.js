@@ -1,4 +1,5 @@
 var BLACKLIST = [/https\:\/\/www\.google\.com\/\_\/chrome\/newtab.*/];
+var MILLIS_BEFORE_CLEAR = 1000 * 60; // 60 seconds
 var LT = function(a,b) {return a < b};
 var GT = function(a,b) {return a > b};
 var LT_OBJ = function(a,b) {
@@ -20,7 +21,6 @@ chrome.runtime.onMessage.addListener(handleMessage);
 
 function init() {
     window.preloaded = [];
-    window.memo = {};
     chrome.storage.local.get('index', function(items) {
         var obj = items['index'];
         if (obj === undefined) {
@@ -140,7 +140,6 @@ function makeSuggestions(query, candidates, cb) {
             }
         }
     }
-    memo[query] = {result:res, time:+(new Date())};
 
     cb(res);
 }
@@ -157,26 +156,18 @@ function dispatchSuggestions(text, cb) {
     query.keywords = query.keywords.filter(function(x) {return x.length >= MIN_KEYWORD_LEN});
     query.keywords.sort(function(a,b){return b.length-a.length});
 
-    var cached = getCached(query);
-    var candidates;
-    if (cached != false) {
-        candidates = cached.candidates;
-    } else {
-        candidates = preloaded;
-    }
-
     if (query.after >= CUTOFF_DATE) {
-        var start = Math.floor(binarySearch(candidates, {'time':+query.after}, LT_OBJ,
-                                            GT_OBJ, 0, candidates.length));
+        var start = Math.floor(binarySearch(preloaded, {'time':+query.after}, LT_OBJ,
+                                            GT_OBJ, 0, preloaded.length));
         var end;
         if (query.before) {
-            end = Math.ceil(binarySearch(candidates, {'time':+query.before}, LT_OBJ,
-                                         GT_OBJ, 0, candidates.length));
+            end = Math.ceil(binarySearch(preloaded, {'time':+query.before}, LT_OBJ,
+                                         GT_OBJ, 0, preloaded.length));
         } else {
-            end = candidates.length;
+            end = preloaded.length;
         }
 
-        makeSuggestions(query, candidates.slice(start, end), cb)
+        makeSuggestions(query, preloaded.slice(start, end), cb)
     } else {
         var start = Math.floor(binarySearch(timeIndex, +query.after, LT,
                                             GT, 0, timeIndex.length));
