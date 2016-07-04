@@ -13,6 +13,9 @@ var MIN_KEYWORD_LEN = 4;
 var MIN_COMPONENT_KEYWORD_LEN = 3;
 var MAX_MEM = 100000000; // bytes
 
+Array.max = function( array ){
+    return Math.max.apply(Math,array);
+};
 
 chrome.omnibox.onInputChanged.addListener(omnibarHandler);
 chrome.runtime.onMessage.addListener(handleMessage);
@@ -21,20 +24,23 @@ function init() {
     window.preloaded = [];
     window.memo = {};
     chrome.storage.local.get('index', function(items) {
-        window.timeIndex = items['index'];
-        if (index === undefined) {
+        var obj = items['index'];
+        if (obj === undefined) {
             window.timeIndex = [];
             chrome.storage.local.get(null, function(items) {
                 for (var key in items) {
-                    timeIndex.push(item[key].time);
+                    if (key != 'index') {
+                        timeIndex.push(items[key].time.toString());
+                    }
                 }
 
                 timeIndex.sort(function(a,b) {return a.time - b.time}); // soonest last
                 makePreloaded(timeIndex);
-                chrome.storage.local.set('index':timeIndex);
+                chrome.storage.local.set({'index':{'index':timeIndex}});
             });
 
         } else {
+            window.timeIndex = obj.index;
             makePreloaded(timeIndex);
         }
     });
@@ -43,14 +49,21 @@ function init() {
 function makePreloaded(index) {
     var preloaded_index = [];
     var millis = +CUTOFF_DATE;
-    var j = Math.floor(binarySearch(index, millis, LT, GT, 0, index.length));
+    var i = Math.floor(binarySearch(index, millis, LT, GT, 0, index.length));
     for (var j = i; j < index.length; j++) {
-        preloaded_index.push(index[i]);
+        preloaded_index.push(index[j]);
     }
 
     chrome.storage.local.get(preloaded_index, function(items) {
-        window.preloaded = items;
+        window.preloaded = [];
+        for (var key in items) {
+            preloaded.push(items[key]);
+        }
+
+        preloaded.sort(function(a,b){return a.time-b.time});
     });
+
+    
 }
 
 function assert(condition, message) {
@@ -71,9 +84,9 @@ function handleMessage(data, sender, sendRespones) {
             console.log("Stored: " + data.title);
         });
 
-        timeIndex.append(time);
-        preloaded.append(data);
-        chrome.storage.local.set('index':timeIndex);
+        timeIndex.push(time.toString());
+        preloaded.push(data);
+        chrome.storage.local.set({'index':{'index':timeIndex}});
     }
 }
 
@@ -108,20 +121,26 @@ function shouldArchive(data) {
 
 function makeSuggestions(keywords, candidates, cb) {
     var res = [];
+    var urls = {};
     var keywordsLen = keywords.length;
     var j = 0;
-    for (var i = 0; i < candidates.length; i++) {
+    for (var i = ; i < candidates.length; i++) {
         var text = candidates[i].text;
-        for (var i = 0; i < keywordsLen; i++) {
-            if (text.indexOf(keywordsLen[i]) === -1) {
+        var isMatching = true;
+        for (var k = 0; k < keywordsLen; k++) {
+            if (text.indexOf(keywordsLen[k]) === -1) {
+                isMatching = false;
                 break;
             }
         }
 
-        res.append(candidates[i]);
-        j += 1;
-        if (j === 5) {
-            break;
+        if (isMatching && !(candidates[i].url in urls)) {
+            res.push(candidates[i]);
+            urls[candidates[i].url] = true;
+            j += 1;
+            if (j === 5) {
+                break;
+            }
         }
     }
 
@@ -131,27 +150,27 @@ function makeSuggestions(keywords, candidates, cb) {
 function dispatchSuggestions(text, cb) {
     var query = makeQueryFromText(text);
     query.text = text;
-    if (query.after >= query.before) return;
+    if (query.before !== false && query.after !== false && query.after >= query.before) return;
 
-    if (max(keywords.map(function(x){x.length})) < MIN_KEYWORD_LEN) {
+    if (Array.max(query.keywords.map(function(x){x.length})) < MIN_KEYWORD_LEN) {
         return;
     }
 
-    keywords = keywords.reduce(function(x) {return x.length >= MIN_COMPONENT_KEYWORD_LEN});
-    keywords.sort(function(a,b){return b.length-a.length});
+    query.keywords = query.keywords.filter(function(x) {return x.length >= MIN_COMPONENT_KEYWORD_LEN});
+    query.keywords.sort(function(a,b){return b.length-a.length});
 
     if (query.after >= CUTOFF_DATE) {
-        var start = Math.floor(binarySearch(preloaded, +query.after, LT_OBJ,
+        var start = Math.floor(binarySearch(preloaded, {'time':+query.after}, LT_OBJ,
                                             GT_OBJ, 0, preloaded.length));
         var end;
         if (query.before) {
-            end = Math.ceil(binarySearch(preloaded, +query.before, LT_OBJ,
+            end = Math.ceil(binarySearch(preloaded, {'time':+query.before}, LT_OBJ,
                                          GT_OBJ, 0, preloaded.length));
         } else {
             end = preloaded.length;
         }
 
-        makeSuggestions(keywords, preloaded.slice(start, end), cb)
+        makeSuggestions(query.keywords, preloaded.slice(start, end), cb)
     } else {
         var start = Math.floor(binarySearch(timeIndex, +query.after, LT,
                                             GT, 0, timeIndex.length));
@@ -164,7 +183,7 @@ function dispatchSuggestions(text, cb) {
         }
 
         chrome.storage.local.get(timeIndex.slice(start, end), function(items) {
-            makeSuggestions(keywords, items, cb);
+            makeSuggestions(query.keywords, items, cb);
         });
     }
 }
@@ -183,5 +202,7 @@ function binarySearch(arr, value, lt, gt, i, j) {
     } else {
         return m;
     }
-    return binarySearch(arr, value, i, j);
+    return binarySearch(arr, value, lt, gt, i, j);
 }
+
+init();

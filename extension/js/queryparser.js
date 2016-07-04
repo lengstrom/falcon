@@ -79,13 +79,14 @@ function parseDate(query) {
     var text = query.text;
     var regexes = {'before':BEFORE, 'after':AFTER};
     for (var arg in regexes) {
-        var [match, text] = getArgumentForRegex(text, regexes[arg]);
+        var [match, textTmp] = getArgumentForRegex(text, regexes[arg]);
         if (match != false) {
             var date = chrono.parseDate(match);
             if (date != null) {
                 query[arg] = date;
                 query.shouldDate = true;
             }
+            text = textTmp;
         }
     }
 

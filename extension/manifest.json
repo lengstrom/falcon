@@ -21,6 +21,6 @@
     },
     "omnibox": { "keyword" : "f" },
     "background": {
-        "scripts": ["js/background.js"]
+        "scripts": ["js/lib/chrono.min.js", "js/textprocessing.js", "js/queryparser.js", "js/background.js"]
     }
 }
