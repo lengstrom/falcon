@@ -7,6 +7,9 @@ Quick, flexible full text browsing history search in Chrome.
 `before: "yesterday at 5pm" after: "three weeks ago" emscripten blog "anish athalye"` 
 - Searches for websites that you browsed between yesterday at 5pm and 3 weeks ago containing the keywords "emscripten" and "blog" and "anish athalye"
 
+`-'cat food' just 'a dog'`
+- Searches for websites you visited containing the keywords "just" and "a dog", and without the phrase "cat food".
+
 `ethereum medium` 
 - Searches for websites you visited in the last 2 weeks containing the keywords "ethereum" and "medium"
 
