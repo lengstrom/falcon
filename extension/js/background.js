@@ -32,7 +32,7 @@ function init() {
                     }
                 }
 
-                timeIndex.sort(function(a,b) {return a.time - b.time}); // soonest last
+                timeIndex.sort(function(a,b) {return parseInt(a) - parseInt(b)}); // soonest last
                 makePreloaded(timeIndex);
                 chrome.storage.local.set({'index':{'index':timeIndex}});
             });
@@ -115,9 +115,10 @@ function shouldArchive(data) {
     return true;
 }
 
-function makeSuggestions(keywords, candidates, cb) {
+function makeSuggestions(query, candidates, cb) {
     var res = [];
     var urls = {};
+    var keywords = query.keywords;
     var keywordsLen = keywords.length;
     var j = 0;
     for (var i = candidates.length - 1; i > -1; i--) {
@@ -139,6 +140,7 @@ function makeSuggestions(keywords, candidates, cb) {
             }
         }
     }
+    memo[query] = {result:res, time:+(new Date())};
 
     cb(res);
 }
@@ -155,18 +157,26 @@ function dispatchSuggestions(text, cb) {
     query.keywords = query.keywords.filter(function(x) {return x.length >= MIN_KEYWORD_LEN});
     query.keywords.sort(function(a,b){return b.length-a.length});
 
+    var cached = getCached(query);
+    var candidates;
+    if (cached != false) {
+        candidates = cached.candidates;
+    } else {
+        candidates = preloaded;
+    }
+
     if (query.after >= CUTOFF_DATE) {
-        var start = Math.floor(binarySearch(preloaded, {'time':+query.after}, LT_OBJ,
-                                            GT_OBJ, 0, preloaded.length));
+        var start = Math.floor(binarySearch(candidates, {'time':+query.after}, LT_OBJ,
+                                            GT_OBJ, 0, candidates.length));
         var end;
         if (query.before) {
-            end = Math.ceil(binarySearch(preloaded, {'time':+query.before}, LT_OBJ,
-                                         GT_OBJ, 0, preloaded.length));
+            end = Math.ceil(binarySearch(candidates, {'time':+query.before}, LT_OBJ,
+                                         GT_OBJ, 0, candidates.length));
         } else {
-            end = preloaded.length;
+            end = candidates.length;
         }
 
-        makeSuggestions(query.keywords, preloaded.slice(start, end), cb)
+        makeSuggestions(query, candidates.slice(start, end), cb)
     } else {
         var start = Math.floor(binarySearch(timeIndex, +query.after, LT,
                                             GT, 0, timeIndex.length));
@@ -178,8 +188,20 @@ function dispatchSuggestions(text, cb) {
             end = timeIndex.length;
         }
 
-        chrome.storage.local.get(timeIndex.slice(start, end), function(items) {
-            makeSuggestions(query.keywords, items, cb);
+        window.sorted = [];
+        var get = timeIndex.slice(start, end);
+        var index = Math.ceil(binarySearch(get, +CUTOFF_DATE, LT, GT, 0, get.length));
+        if (index < get.length) {
+            sorted = preloaded.slice(0, get.length - index + 1);
+        }
+        get = get.slice(0,index);
+        
+        chrome.storage.local.get(get, function(items) {
+            for (var key in items) {
+                sorted.push(items[key]);
+            }
+            sorted.sort(function(a,b) {return a.time - b.time});
+            makeSuggestions(query, sorted, cb);
         });
     }
 }
