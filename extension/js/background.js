@@ -9,8 +9,7 @@ var GT_OBJ = function(a,b) {
     return a.time > b.time;
 }
 
-var MIN_KEYWORD_LEN = 4;
-var MIN_COMPONENT_KEYWORD_LEN = 3;
+var MIN_KEYWORD_LEN = 3;
 
 Array.max = function( array ){
     return Math.max.apply(Math,array);
@@ -155,7 +154,7 @@ function dispatchSuggestions(text, cb) {
         return;
     }
 
-    query.keywords = query.keywords.filter(function(x) {return x.length >= MIN_COMPONENT_KEYWORD_LEN});
+    query.keywords = query.keywords.filter(function(x) {return x.length >= MIN_KEYWORD_LEN});
     query.keywords.sort(function(a,b){return b.length-a.length});
 
     if (query.after >= CUTOFF_DATE) {
