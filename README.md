@@ -1,6 +1,6 @@
 # Falcon
 
-Quick, flexible full text browsing history search in Chrome.
+Quick, flexible full text browsing history search in Chrome. Press `f` in the omnibar to activate!
 
 ## Examples
 
