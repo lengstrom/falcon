@@ -12,9 +12,9 @@
         }
     ],
     "permissions": [
+        "unlimitedStorage",
         "<all_urls>",
-        "storage",
-        "unlimitedStorage"
+        "storage"
     ],
     "browser_action": {
         "default_icon": "icon.png"

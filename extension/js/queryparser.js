@@ -3,6 +3,9 @@ var AFTER = /(\s|^)after:/i;
 var DEFAULT_DATE_OFFSET = 14;
 var PARSERS = [parseDate, parseExact, parseKeywords, normalize];
 
+var CUTOFF_DATE = new Date();
+CUTOFF_DATE.setDate(CUTOFF_DATE.getDate() - DEFAULT_DATE_OFFSET);
+
 function extractTextBtwChars(i, text) { // i is index of first char
     var ch = text[i];
     if (!ch.match(/['"]/)) {
@@ -92,7 +95,6 @@ function parseDate(query) {
 function parseKeywords(query) {
     var text = query.text;
     query.keywords = query.keywords.concat(query.text.trim().split(/\s+/));
-    delete query.text;
     return query;
 }
 
@@ -102,12 +104,10 @@ function normalize(query) {
 }
 
 function makeQueryFromText(text) {
-    var date = new Date();
-    date.setDate(date.getDate() - DEFAULT_DATE_OFFSET);
     var query = {
         text:text,
-        before: undefined,
-        after: date,
+        before: false,
+        after: CUTOFF_DATE,
         keywords: []
     }
     
