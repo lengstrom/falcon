@@ -146,9 +146,9 @@ function suggestionsComplete(suggestions, shouldDate, suggestCb) {
             }
         }
         
-        var fmt =  (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getUTCFullYear().toString().substring(2,4) + " " + hour;
+        var fmt =  (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getUTCFullYear().toString().substring(2,4);
         if (shouldDate) {
-            description += ':: <match>' + escape(fmt) + '</match> ';
+            description += ':: <match>' + escape(fmt + " " + hour) + '</match> ';
         } else {
             description += ':: ' + escape(fmt) + ' ';
         }
