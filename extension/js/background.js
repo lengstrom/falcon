@@ -1,8 +1,3 @@
-// BLACKLIST = [
-//     "https://www.google.com/_/chrome/newtab",  
-// ];
-
-
 var MILLIS_BEFORE_CLEAR = 1000 * 60; // 60 seconds
 var CLEAR_DELAY = 20000;
 var LT = function(a,b) {return a < b};
@@ -46,7 +41,7 @@ function init() {
     chrome.storage.local.get('blacklist', function(items)) {
         var object = items['blacklist'];
         if (object === undefined) {
-            window.blacklist = {'string':['https://www.google.com/_/chrome/newtab'], 'regex':[/.*bankofamerica.com.*/]};
+            window.blacklist = {'string':['https://www.google.com/_/chrome/newtab'], 'regex':[]}; // show example in page
             chrome.storage.local.set({'blacklist':blacklist});
         } else {
             window.blacklist = object;
