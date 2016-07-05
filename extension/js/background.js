@@ -190,6 +190,7 @@ function makeSuggestions(query, candidates, cb, suggestCb) {
 
 function dispatchSuggestions(text, cb, suggestCb) {
     var query = makeQueryFromText(text);
+    console.log(query);
     query.text = text;
     if (query.before !== false && query.after !== false && query.after >= query.before) return;
 

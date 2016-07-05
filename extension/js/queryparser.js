@@ -14,13 +14,19 @@ function extractTextBtwChars(i, text) { // i is index of first char
         ch = " ";
     }
     var next = text.indexOf(ch, i+1);
+    var matched;
     if (next > -1) {
-        var matched = text.substring(i+1, next);
+        matched = text.substring(i+1, next);
         text = text.substring(0,i) + " " + text.substring(next+1, text.length);
-        return [matched, text];
-    } else {
+    } else if (ch == ' ') {
+        matched = text.substring(i+1, text.length);
+        text = text.substring(0,i)
+    }
+    else {
         return [false, false];
     }
+
+    return [matched, text];
 }
 
 function getArgumentForRegex(text, regex) {
@@ -139,6 +145,7 @@ function parseNegative(query) {
     // chrono.parseDate('An appointment on Sep 12-13')
     var text = query.text;
     while (true) {
+        debugger;
         var [match, textTmp] = getArgumentForRegex(text, NEGATIVE);
         if (match != false) {
             query.negative.push(match);
