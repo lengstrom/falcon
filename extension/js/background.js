@@ -117,19 +117,42 @@ function omnibarHandler(text, suggest) {
     dispatchSuggestions(text, suggestionsComplete, suggest);
 }
 
+MAX_URL_LEN_SHOWN = 50;
 
 function suggestionsComplete(suggestions, shouldDate, suggestCb) {
     var res = [];
     var i;
     for (i = 0; i < suggestions.length; i++) {
         var elem = suggestions[i];
-        var description = "<url>" + escape(elem.url) + "</url> "
-        if (shouldDate) {
-            var date = new Date(elem.time);
-            var fmt = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getUTCFullYear().toString().substring(2,4);
-            description += ' on <match>' + escape(fmt) + '</match> ';
+        var urlToShow = elem.url;
+        if (urlToShow.length >= MAX_URL_LEN_SHOWN) {
+            urlToShow = urlToShow.substring(0,47) + '...';
         }
-
+        var description = "<url>" + escape(urlToShow) + "</url> "
+        var date = new Date(elem.time);
+        var hour = date.getHours();
+        if (hour > 12) {
+            hour -= 12;
+            if (hour == 12) {
+                horu = hour.toString + 'am';
+            } else {
+                hour = hour.toString() + "pm";
+            }
+        } else {
+            if (hour == 12) {
+                hour = hour.toString() + "pm";
+            } else {
+                hour = hour.toString() + "am";
+            }
+        }
+        
+        var fmt =  (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getUTCFullYear().toString().substring(2,4) + " " + hour;
+        if (shouldDate) {
+            description += ':: <match>' + escape(fmt) + '</match> ';
+        } else {
+            description += ':: ' + escape(fmt) + ' ';
+        }
+ 
         description += '- ' + escape(elem.title);
         res.push({content:elem.url, description:description});
         console.log(elem.url);
