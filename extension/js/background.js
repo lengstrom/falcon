@@ -1,4 +1,8 @@
-var BLACKLIST = [/https\:\/\/www\.google\.com\/\_\/chrome\/newtab.*/];
+// BLACKLIST = [
+//     "https://www.google.com/_/chrome/newtab",  
+// ];
+
+
 var MILLIS_BEFORE_CLEAR = 1000 * 60; // 60 seconds
 var CLEAR_DELAY = 20000;
 var LT = function(a,b) {return a < b};
@@ -39,6 +43,15 @@ function acceptInput(text, disposition) {
 function init() {
     window.preloaded = [];
     window.cache = {};
+    chrome.storage.local.get('blacklist', function(items)) {
+        var object = items['blacklist'];
+        if (object === undefined) {
+            window.blacklist = {'string':['https://www.google.com/_/chrome/newtab'], 'regex':[/.*bankofamerica.com.*/]};
+            chrome.storage.local.set({'blacklist':blacklist});
+        } else {
+            window.blacklist = object;
+        }
+    }
     chrome.storage.local.get('index', function(items) {
         var obj = items['index'];
         if (obj === undefined) {
@@ -142,8 +155,25 @@ function clearCache() {
 }
 
 function shouldArchive(data) {
-    for (var url in BLACKLIST) {
-        if (data.url.match(url) != null) return false;
+    // custom / regex, DEFAULT_BLACKLIST
+    var string = blacklist.string;
+    var regex = blacklist.regex;
+    var url = data.url;
+    for (var i = 0; i < string.length; i++) {
+        if (url.indexOf(string[i]) > -1) {
+            return false;
+        }
+    }
+    for (var i = 0; i < DEFAULT_BLACKLIST.length; i++) {
+        if (url.indexOf(DEFAULT_BLACKLIST[i]) > -1) {
+            return false;
+        }
+    }
+
+    for (var i = 0; i < regex.length; i++) {
+        if (url.match(regex[i]) != null) {
+            return false;
+        }
     }
 
     return true;
