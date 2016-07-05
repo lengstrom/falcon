@@ -20,7 +20,7 @@ function extractTextBtwChars(i, text) { // i is index of first char
         text = text.substring(0,i) + " " + text.substring(next+1, text.length);
     } else if (ch == ' ') {
         matched = text.substring(i+1, text.length);
-        text = text.substring(0,i)
+        text = text.substring(0,i);
     }
     else {
         return [false, false];
@@ -145,7 +145,6 @@ function parseNegative(query) {
     // chrono.parseDate('An appointment on Sep 12-13')
     var text = query.text;
     while (true) {
-        debugger;
         var [match, textTmp] = getArgumentForRegex(text, NEGATIVE);
         if (match != false) {
             query.negative.push(match);
