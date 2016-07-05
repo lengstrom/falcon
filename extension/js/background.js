@@ -38,7 +38,7 @@ function acceptInput(text, disposition) {
 function init() {
     window.preloaded = [];
     window.cache = {};
-    chrome.storage.local.get('blacklist', function(items)) {
+    chrome.storage.local.get('blacklist', function(items) {
         var object = items['blacklist'];
         if (object === undefined) {
             window.blacklist = {'string':['https://www.google.com/_/chrome/newtab'], 'regex':[]}; // show example in page
@@ -46,7 +46,8 @@ function init() {
         } else {
             window.blacklist = object;
         }
-    }
+    });
+
     chrome.storage.local.get('index', function(items) {
         var obj = items['index'];
         if (obj === undefined) {
