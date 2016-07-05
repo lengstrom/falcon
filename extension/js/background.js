@@ -162,7 +162,7 @@ function makeSuggestions(query, candidates, cb, suggestCb) {
         var isMatching = true;
         for (var k = 0; k < negativeLen; k++) {
             if (text.indexOf(negative[k]) > -1) {
-                isMatching == false;
+                isMatching = false;
             }
         }
 
@@ -178,7 +178,7 @@ function makeSuggestions(query, candidates, cb, suggestCb) {
                 res.push(candidates[i]);
                 urls[candidates[i].url] = true;
                 j += 1;
-                if (j === 5) {
+                if (j === 6) {
                     break;
                 }
             }
