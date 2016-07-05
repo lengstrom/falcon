@@ -134,23 +134,33 @@ function makeSuggestions(query, candidates, cb) {
     var urls = {};
     var keywords = query.keywords;
     var keywordsLen = keywords.length;
+    var negative = query.negative;
+    var negativeLen = negative.length;
     var j = 0;
     for (var i = candidates.length - 1; i > -1; i--) {
         var text = candidates[i].text;
         var isMatching = true;
-        for (var k = 0; k < keywordsLen; k++) {
-            if (text.indexOf(keywordsLen[k]) === -1) {
-                isMatching = false;
-                break;
+        for (var k = 0; k < negativeLen; k++) {
+            if (text.indexOf(negative[k]) > -1) {
+                isMatching == false;
             }
         }
 
-        if (isMatching && !(candidates[i].url in urls)) {
-            res.push(candidates[i]);
-            urls[candidates[i].url] = true;
-            j += 1;
-            if (j === 5) {
-                break;
+        if (isMatching) {
+            for (var k = 0; k < keywordsLen; k++) {
+                if (text.indexOf(keywords[k]) === -1) {
+                    isMatching = false;
+                    break;
+                }
+            }
+
+            if (isMatching && !(candidates[i].url in urls)) {
+                res.push(candidates[i]);
+                urls[candidates[i].url] = true;
+                j += 1;
+                if (j === 5) {
+                    break;
+                }
             }
         }
     }
