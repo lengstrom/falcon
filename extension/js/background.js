@@ -18,7 +18,27 @@ Array.max = function( array ){
 };
 
 chrome.omnibox.onInputChanged.addListener(omnibarHandler);
+chrome.omnibox.onInputEntered.addListener(acceptInput);
 chrome.runtime.onMessage.addListener(handleMessage);
+
+function navigate(url) {
+    
+}
+
+function acceptInput(text, disposition) {
+    // disposition: "currentTab", "newForegroundTab", or "newBackgroundTab"
+    switch (disposition) {
+    case "currentTab":
+        chrome.tabs.update({url: text});
+        break;
+    case "newForegroundTab":
+        chrome.tabs.create({url: text});
+        break;
+    case "newBackgroundTab":
+        chrome.tabs.create({url: text, active: false});
+        break;
+    }
+}
 
 function init() {
     window.preloaded = [];
@@ -89,25 +109,29 @@ function handleMessage(data, sender, sendRespones) {
 }
 
 function omnibarHandler(text, suggest) {
-    dispatchSuggestions(text, function(suggestions, shouldDate) {
-        var res = [];
-        var i;
-        for (i = 0; i < suggestions.length; i++) {
-            var elem = suggestions[i];
-            var description = "<url>" + escape(elem.url) + "</url> "
-            if (shouldDate) {
-                var date = new Date(elem.time);
-                var fmt = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getUTCFullYear().toString().substring(2,4);
-                description += ' on <match>' + escape(fmt) + '</match> ';
-            }
+    dispatchSuggestions(text, suggestionsComplete, suggest);
+}
 
-            description += '- ' + escape(elem.title);
-            res.push({content:elem.url, description:description});
+
+function suggestionsComplete(suggestions, shouldDate, suggestCb) {
+    var res = [];
+    var i;
+    for (i = 0; i < suggestions.length; i++) {
+        var elem = suggestions[i];
+        var description = "<url>" + escape(elem.url) + "</url> "
+        if (shouldDate) {
+            var date = new Date(elem.time);
+            var fmt = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getUTCFullYear().toString().substring(2,4);
+            description += ' on <match>' + escape(fmt) + '</match> ';
         }
 
-        suggest(res);
-        window.setTimeout(clearCache, CLEAR_DELAY);
-    });
+        description += '- ' + escape(elem.title);
+        res.push({content:elem.url, description:description});
+        console.log(elem.url);
+    }
+
+    suggestCb(res);
+    window.setTimeout(clearCache, CLEAR_DELAY);
 }
 
 function clearCache() {
@@ -129,7 +153,7 @@ function shouldArchive(data) {
     return true;
 }
 
-function makeSuggestions(query, candidates, cb) {
+function makeSuggestions(query, candidates, cb, suggestCb) {
     var res = [];
     var urls = {};
     var keywords = query.keywords;
@@ -165,10 +189,10 @@ function makeSuggestions(query, candidates, cb) {
         }
     }
 
-    cb(res);
+    cb(res, query.shouldDate, suggestCb);
 }
 
-function dispatchSuggestions(text, cb) {
+function dispatchSuggestions(text, cb, suggestCb) {
     var query = makeQueryFromText(text);
     query.text = text;
     if (query.before !== false && query.after !== false && query.after >= query.before) return;
@@ -191,7 +215,7 @@ function dispatchSuggestions(text, cb) {
             end = preloaded.length;
         }
 
-        makeSuggestions(query, preloaded.slice(start, end), cb)
+        makeSuggestions(query, preloaded.slice(start, end), cb, suggestCb)
     } else {
         var start = Math.floor(binarySearch(timeIndex, +query.after, LT,
                                             GT, 0, timeIndex.length));
@@ -216,7 +240,7 @@ function dispatchSuggestions(text, cb) {
                 sorted.push(items[key]);
             }
             sorted.sort(function(a,b) {return a.time - b.time});
-            makeSuggestions(query, sorted, cb);
+            makeSuggestions(query, sorted, cb, suggestCb);
         });
     }
 }
