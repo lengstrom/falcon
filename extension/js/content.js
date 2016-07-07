@@ -4,7 +4,7 @@
     var nlparser = new NLParser()
     var docString = document.documentElement.cloneNode(deep=true).outerHTML
     var relText = document.body.innerText
-    if(!((window.location.protocol + "//" + window.location.host + "/") === window.location.href)) {
+    if((url.indexOf("docs.google.com") == -1) && !((window.location.protocol + "//" + window.location.host + "/") === url)) {
         relText = nlparser.getRelevantText(docString)
     }
     console.log(relText)

@@ -225,16 +225,17 @@ var readability = {
          * In some cases a body element can't be found (if the HTML is totally hosed for example)
          * so we create a new body node and append it to the document.
          */
-        if(doc.body === null)
+        if(!doc.body)
         {
-            var body = doc.createElement("body");
+            doc.innerHTML = "<html>" + doc.innerHTML + "</html>"
+            /*var body = doc.createElement("body");
             try {
-                document.body = body;
+                doc.body = body;
             }
             catch(e) {
                 doc.documentElement.appendChild(body);
                 dbg(e);
-            }
+            }*/
         }
 
         doc.body.id = "readabilityBody";
@@ -485,7 +486,12 @@ var readability = {
     **/
     grabArticle: function (doc) {
         readability.removeScripts(doc);
-        readability.prepDocument(doc);
+        try {
+            readability.prepDocument(doc);
+        } catch(e) {
+            console.log("Prep error -- nothing major.")
+        }
+
         var page = doc.body
         var stripUnlikelyCandidates = readability.flagIsActive(readability.FLAG_STRIP_UNLIKELYS),
             isPaging = (page !== null) ? true: false;
