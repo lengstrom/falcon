@@ -6,6 +6,9 @@
     var relText = document.body.innerText
     if((url.indexOf("docs.google.com") == -1) && !((window.location.protocol + "//" + window.location.host + "/") === url)) {
         relText = nlparser.getRelevantText(docString)
+        if (!relText) {
+            relText = document.body.innerText
+        }
     }
     console.log(relText)
     chrome.runtime.sendMessage({
