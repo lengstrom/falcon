@@ -1,4 +1,4 @@
-(function(){
+window.setTimeout((function(){
     var epochTime = (new Date()).getTime();
     var url = window.location.href;
     chrome.runtime.sendMessage({
@@ -8,4 +8,4 @@
         "text":document.body.innerText,
         "title":document.title,
     });
-})();
+}), 500);
