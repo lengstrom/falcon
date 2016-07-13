@@ -144,15 +144,15 @@ var readability = {
      *
      * @return void
      **/
-    getArticleTitle: function () {
+    getArticleTitle: function (doc) {
         var curTitle = "",
             origTitle = "";
 
         try {
-            curTitle = origTitle = document.title;
+            curTitle = origTitle = doc.title;
 
             if(typeof curTitle !== "string") { /* If they had an element with id "title" in their HTML */
-                curTitle = origTitle = readability.getInnerText(document.getElementsByTagName('title')[0]);
+                curTitle = origTitle = readability.getInnerText(doc.getElementsByTagName('title')[0]);
             }
         }
         catch(e) {}
@@ -175,7 +175,7 @@ var readability = {
         }
         else if(curTitle.length > 150 || curTitle.length < 15)
         {
-            var hOnes = document.getElementsByTagName('h1');
+            var hOnes = doc.getElementsByTagName('h1');
             if(hOnes.length === 1)
             {
                 curTitle = readability.getInnerText(hOnes[0]);
@@ -187,11 +187,7 @@ var readability = {
         if(curTitle.split(' ').length <= 4) {
             curTitle = origTitle;
         }
-
-        var articleTitle = document.createElement("H1");
-        articleTitle.innerHTML = curTitle;
-
-        return articleTitle;
+        return curTitle;
     },
 
     /**
