@@ -8,7 +8,7 @@
             "matches": [
                 "<all_urls>"
             ],
-            "js": ["js/content.js"]
+            "js": ["js/lib/stopwords_res.js", "js/lib/readability.js", "js/relevanttext.js", "js/content.js"]
         }
     ],
     "permissions": [
