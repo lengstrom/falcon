@@ -13,11 +13,15 @@ var NLParser = (function NLParser() {
 		_this.getRelevantText = function(docstr) {
   			var parser = new DOMParser()
   			, doc = parser.parseFromString(docstr, "text/html");
-			var readableResponse = readability.grabArticle(doc)
-			if (!readableResponse) {
+			try {
+				var readableResponse = readability.grabArticle(doc)
+				if (!readableResponse) {
+					return null;
+				}
+				return readableResponse.innerText.replace(/(\r\n|\n|\r|\t|  )/gm,"").deleteArray(stops) + " --- " + readability.getArticleTitle(doc)
+			} catch (err) {
 				return null;
 			}
-			return readableResponse.innerText.replace(/(\r\n|\n|\r|\t|  )/gm,"").deleteArray(stops) + " --- " + readability.getArticleTitle(doc)
 		}
 	};
 }());

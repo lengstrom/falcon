@@ -277,7 +277,8 @@ var readability = {
                 var newBody = doc.createElement('body');
                 newBody.innerHTML = bestFrame.contentWindow.document.body.innerHTML;
                 newBody.style.overflow = 'scroll';
-                document.body = newBody;
+                doc.body = newBody;
+				
 
                 var frameset = doc.getElementsByTagName('frameset')[0];
                 if(frameset) {
@@ -496,7 +497,7 @@ var readability = {
         var stripUnlikelyCandidates = readability.flagIsActive(readability.FLAG_STRIP_UNLIKELYS),
             isPaging = (page !== null) ? true: false;
 
-        page = page ? page : document.body;
+        page = page ? page : doc.body;
 
         var pageCacheHtml = page.innerHTML;
 
@@ -537,7 +538,7 @@ var readability = {
             /* Turn all divs that don't have children block level elements into p's */
             if (node.tagName === "DIV") {
                 if (node.innerHTML.search(readability.regexps.divToPElements) === -1) {
-                    var newNode = document.createElement('p');
+                    var newNode = doc.createElement('p');
                     try {
                         newNode.innerHTML = node.innerHTML;
                         node.parentNode.replaceChild(newNode, node);
@@ -555,7 +556,7 @@ var readability = {
                     for(var i = 0, il = node.childNodes.length; i < il; i+=1) {
                         var childNode = node.childNodes[i];
                         if(childNode.nodeType === 3) { // Node.TEXT_NODE
-                            var p = document.createElement('p');
+                            var p = doc.createElement('p');
                             p.innerHTML = childNode.nodeValue;
                             p.style.display = 'inline';
                             p.className = 'readability-styled';
@@ -642,7 +643,7 @@ var readability = {
          **/
         if (topCandidate === null || topCandidate.tagName === "BODY")
         {
-            topCandidate = document.createElement("DIV");
+            topCandidate = doc.createElement("DIV");
             topCandidate.innerHTML = page.innerHTML;
             page.innerHTML = "";
             page.appendChild(topCandidate);
@@ -653,7 +654,7 @@ var readability = {
          * Now that we have the top candidate, look through its siblings for content that might also be related.
          * Things like preambles, content split by ads that we removed, etc.
         **/
-        var articleContent        = document.createElement("DIV");
+        var articleContent        = doc.createElement("DIV");
         if (isPaging) {
             articleContent.id     = "readability-content";
         }
@@ -715,7 +716,7 @@ var readability = {
                     /* We have a node that isn't a common block level element, like a form or td tag. Turn it into a div so it doesn't get filtered out later by accident. */
 
                     dbg("Altering siblingNode of " + siblingNode.nodeName + ' to div.');
-                    nodeToAppend = document.createElement("DIV");
+                    nodeToAppend = doc.createElement("DIV");
                     try {
                         nodeToAppend.id = siblingNode.id;
                         nodeToAppend.innerHTML = siblingNode.innerHTML;
@@ -1182,12 +1183,12 @@ var readability = {
     appendNextPage: function (nextPageLink) {
         readability.curPageNum+=1;
 
-        var articlePage       = document.createElement("DIV");
+        var articlePage       = doc.createElement("DIV");
         articlePage.id        = 'readability-page-' + readability.curPageNum;
         articlePage.className = 'page';
         articlePage.innerHTML = '<p class="page-separator" title="Page ' + readability.curPageNum + '">&sect;</p>';
 
-        document.getElementById("readability-content").appendChild(articlePage);
+        doc.getElementById("readability-content").appendChild(articlePage);
 
         if(readability.curPageNum > readability.maxPages) {
             var nextPageMarkup = "<div style='text-align: center'><a href='" + nextPageLink + "'>View Next Page</a></div>";
@@ -1217,7 +1218,7 @@ var readability = {
                     }
 
                     // TODO: this ends up doubling up page numbers on NYTimes articles. Need to generically parse those away.
-                    var page = document.createElement("DIV");
+                    var page = doc.createElement("DIV");
 
                     /**
                      * Do some preprocessing to our HTML to make it ready for appending.
@@ -1255,7 +1256,7 @@ var readability = {
                     var firstP = content.getElementsByTagName("P").length ? content.getElementsByTagName("P")[0] : null;
                     if(firstP && firstP.innerHTML.length > 100) {
                         for(var i=1; i <= readability.curPageNum; i+=1) {
-                            var rPage = document.getElementById('readability-page-' + i);
+                            var rPage = doc.getElementById('readability-page-' + i);
                             if(rPage && rPage.innerHTML.indexOf(firstP.innerHTML) !== -1) {
                                 dbg('Duplicate of page ' + i + ' - skipping.');
                                 articlePage.style.display = 'none';
