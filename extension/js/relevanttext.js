@@ -14,6 +14,9 @@ var NLParser = (function NLParser() {
   			var parser = new DOMParser()
   			, doc = parser.parseFromString(docstr, "text/html");
 			var readableResponse = readability.grabArticle(doc)
+			if (!readableResponse) {
+				return null;
+			}
 			return readableResponse.innerText.replace(/(\r\n|\n|\r|\t|  )/gm,"").deleteArray(stops) + " --- " + readability.getArticleTitle(doc)
 		}
 	};

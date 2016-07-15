@@ -113,6 +113,7 @@ function handleMessage(data, sender, sendRespones) {
     }
 }
 
+
 function omnibarHandler(text, suggest) {
     dispatchSuggestions(text, suggestionsComplete, suggest);
 }
