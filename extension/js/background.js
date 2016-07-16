@@ -40,20 +40,20 @@ function init() {
     window.preloaded = [];
     window.cache = {};
     chrome.storage.local.get(['blacklist', 'preferences'], function(items) {
-        var object = items['blacklist'];
-        if (object === undefined) {
+        var obj = items['blacklist'];
+        if (obj === undefined || !('PAGE' in obj && 'SITE' in obj && 'REGEX' in obj)) {
             window.blacklist = {'PAGE':[], 'REGEX':[], 'SITE':[]}; // show example in page
             chrome.storage.local.set({'blacklist':blacklist});
         } else {
-            window.blacklist = object;
+            window.blacklist = obj;
         }
         
-        var object = items['preferences'];
-        if (object === undefined) {
+        var obj = items['preferences'];
+        if (obj === undefined) {
             window.preferences = {};
             chrome.storage.local.set({'preferences':preferences});
         } else {
-            window.preferences = object;
+            window.preferences = obj;
         }
     });
 
