@@ -38,13 +38,21 @@ function acceptInput(text, disposition) {
 function init() {
     window.preloaded = [];
     window.cache = {};
-    chrome.storage.local.get('blacklist', function(items) {
+    chrome.storage.local.get(['blacklist', 'preferences'], function(items) {
         var object = items['blacklist'];
         if (object === undefined) {
             window.blacklist = {'PAGE':[], 'REGEX':[], 'SITE':[]}; // show example in page
             chrome.storage.local.set({'blacklist':blacklist});
         } else {
             window.blacklist = object;
+        }
+        
+        var object = items['preferences'];
+        if (object === undefined) {
+            window.preferences = {};
+            chrome.storage.local.set({'preferences':preferences});
+        } else {
+            window.preferences = object;
         }
     });
 
@@ -110,6 +118,12 @@ function handleMessage(data, sender, sendRespones) {
         timeIndex.push(time.toString());
         preloaded.push(data);
         chrome.storage.local.set({'index':{'index':timeIndex}});
+    } else if (data.msg === 'setPreferences') {
+        preferences = data.preferences;
+        chrome.storage.local.set({'preferences':preferences});
+    } else if (data.msg === 'setBlacklist') {
+        blacklist = data.blacklist;
+        chrome.storage.local.set({'blacklist':blacklist});
     }
 }
 
