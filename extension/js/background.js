@@ -41,7 +41,7 @@ function init() {
     chrome.storage.local.get('blacklist', function(items) {
         var object = items['blacklist'];
         if (object === undefined) {
-            window.blacklist = {'string':['https://www.google.com/_/chrome/newtab'], 'regex':[]}; // show example in page
+            window.blacklist = {'PAGE':[], 'REGEX':[], 'SITE':[]}; // show example in page
             chrome.storage.local.set({'blacklist':blacklist});
         } else {
             window.blacklist = object;
