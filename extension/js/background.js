@@ -134,13 +134,13 @@ function suggestionsComplete(suggestions, shouldDate, suggestCb) {
         var hour = date.getHours();
         if (hour > 12) {
             hour -= 12;
-            if (hour == 12) {
+            if (hour === 12) {
                 horu = hour.toString + 'am';
             } else {
                 hour = hour.toString() + "pm";
             }
         } else {
-            if (hour == 12) {
+            if (hour === 12) {
                 hour = hour.toString() + "pm";
             } else {
                 hour = hour.toString() + "am";
@@ -239,6 +239,10 @@ function makeSuggestions(query, candidates, cb, suggestCb) {
 }
 
 function dispatchSuggestions(text, cb, suggestCb) {
+    if (text.indexOf('"most common form of preprocessing"') > -1) {
+        debugger;
+    }
+
     var query = makeQueryFromText(text);
     query.text = text;
     if (query.before !== false && query.after !== false && query.after >= query.before) return;
