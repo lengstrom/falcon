@@ -1,5 +1,6 @@
 var MILLIS_BEFORE_CLEAR = 1000 * 60; // 60 seconds
 var CLEAR_DELAY = 20000;
+var MAX_URL_LEN_SHOWN = 50;
 var LT = function(a,b) {return a < b};
 var GT = function(a,b) {return a > b};
 var LT_OBJ = function(a,b) {
@@ -131,8 +132,6 @@ function handleMessage(data, sender, sendRespones) {
 function omnibarHandler(text, suggest) {
     dispatchSuggestions(text, suggestionsComplete, suggest);
 }
-
-MAX_URL_LEN_SHOWN = 50;
 
 function suggestionsComplete(suggestions, shouldDate, suggestCb) {
     var res = [];
