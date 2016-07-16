@@ -224,25 +224,24 @@ function makeSuggestions(query, candidates, cb, suggestCb) {
                 }
             }
 
-            if (isMatching && !(candidates[i].url in urls)) {
-                res.push(candidates[i]);
-                urls[candidates[i].url] = true;
-                j += 1;
-                if (j === 6) {
-                    break;
+            if (isMatching) {
+                var cleanedURL = candidates[i].url.replace(/(#.+?)$/, '');
+                if (!(cleanedURL in urls)) {
+                    res.push(candidates[i]);
+                    urls[cleanedURL] = true;
+                    j += 1;
+                    if (j === 6) {
+                        break;
+                    }
                 }
             }
         }
     }
 
-    cb(res, query.shouldDate, suggestCb);
+    cb(res,query.shouldDate,suggestCb);
 }
 
 function dispatchSuggestions(text, cb, suggestCb) {
-    if (text.indexOf('"most common form of preprocessing"') > -1) {
-        debugger;
-    }
-
     var query = makeQueryFromText(text);
     query.text = text;
     if (query.before !== false && query.after !== false && query.after >= query.before) return;
