@@ -174,18 +174,28 @@ function clearCache() {
     }
 }
 
+function escapeRegExp(str) {
+    return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+}
+
+// shouldArchive
 function shouldArchive(data) {
+    // blacklist =  {"REGEX", "PAGE", "SITE"}
     // custom / regex, DEFAULT_BLACKLIST
-    var string = blacklist.string;
-    var regex = blacklist.regex;
+    var site = blacklist["SITE"];
+    var page = blacklist["PAGE"];
+    var regex = blacklist["REGEX"];
     var url = data.url;
-    for (var i = 0; i < string.length; i++) {
-        if (url.indexOf(string[i]) > -1) {
+
+    for (var i = 0; i < site.length; i++) {
+        // var reg = new RegExp(escapeRegExp(page[i]) + ".*");
+        if (url.indexOf(site[i]) === 0) {
             return false;
         }
     }
-    for (var i = 0; i < DEFAULT_BLACKLIST.length; i++) {
-        if (url.indexOf(DEFAULT_BLACKLIST[i]) > -1) {
+
+    for (var i = 0; i < page.length; i++) {
+        if (cleanURL(data.url) === page[i]) {
             return false;
         }
     }
@@ -225,7 +235,7 @@ function makeSuggestions(query, candidates, cb, suggestCb) {
             }
 
             if (isMatching) {
-                var cleanedURL = candidates[i].url.replace(/(#.+?)$/, '');
+                var cleanedURL = cleanURL(candidates[i].url);
                 if (!(cleanedURL in urls)) {
                     res.push(candidates[i]);
                     urls[cleanedURL] = true;
@@ -239,6 +249,10 @@ function makeSuggestions(query, candidates, cb, suggestCb) {
     }
 
     cb(res,query.shouldDate,suggestCb);
+}
+
+function cleanURL(url) {
+    return url.trim().replace(/(#.+?)$/, '');
 }
 
 function dispatchSuggestions(text, cb, suggestCb) {
