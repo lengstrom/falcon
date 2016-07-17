@@ -38,6 +38,8 @@
                     add(fields[j], bl[fields[j]][i])
                 }
             }
+        } else {
+            add("PAGE", "google.(com|ca|es|fr)");
         }
     });
         
