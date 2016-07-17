@@ -202,13 +202,13 @@ function shouldArchive(data) {
 
     for (var i = 0; i < site.length; i++) {
         // var reg = new RegExp(escapeRegExp(page[i]) + ".*");
-        if (url.indexOf(site[i]) === 0) {
+        if (url.indexOf(site[i].replace("http://",  "").replace("https://", "")) != -1) {
             return false;
         }
     }
 
     for (var i = 0; i < page.length; i++) {
-        if (cleanURL(data.url) === page[i]) {
+        if (cleanURL(data.url).indexOf(page[i].replace("http://",  "").replace("https://", ""))) {
             return false;
         }
     }

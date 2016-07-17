@@ -1,0 +1,8 @@
+body {
+    padding: 0 20% !important;
+}
+
+[contenteditable=true]:empty:before {
+  content: attr(placeholder);
+  display: block; /* For Firefox */
+}

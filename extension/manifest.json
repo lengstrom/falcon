@@ -14,12 +14,15 @@
     "permissions": [
         "unlimitedStorage",
         "<all_urls>",
-        "storage"
+        "storage",
+        "tabs"
     ],
     "browser_action": {
-        "default_icon": "icon.png"
+        "default_icon": "assets/icon.png",
+        "default_popup": "assets/popup.html"
     },
     "omnibox": { "keyword" : "f" },
+    "options_page": "assets/preferences.html",
     "background": {
         "scripts": ["js/blacklist2.js", "js/lib/chrono.min.js", "js/textprocessing.js", "js/queryparser.js", "js/background.js"]
     }
