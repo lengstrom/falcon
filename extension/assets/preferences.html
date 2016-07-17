@@ -9,22 +9,13 @@
         <h4>Enter any valid regex</h4>
         <table class="ui table" id="table">
             <tr><td>Websites</td><td>Type</td><td>Enabled</td></tr>
-            <tr>
-                <td contenteditable="true" placeholder="Add a site..."></td>
-                <td>
-                    <select id="type_dropdown">
-                        <option value="PAGE">Specific Page</option>
-                        <option value="SITE">Entire Website</option>
-                        <option value="REGEX">Regex</option>
-                    </select>
-                </td>
-                <td>
-                    <input type="checkbox" checked></input>
-                </td>
-            </tr>
         </table>   
-        <button class="ui button" id="add">Add</button>
-        <button class="ui button" id="save">Save</button>
+        <button class="ui green button" id="add">Add</button>
+        <button class="ui blue button" id="save">Save</button>
+
+        <h2>Other Preferences</h2>
+        <button class="ui red button" id="clear">Clear All Data</button>
+
         <script type="text/javascript" src="../js/preferences.js"></script>
     </body>
 </html>
