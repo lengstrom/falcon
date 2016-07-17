@@ -18,8 +18,16 @@
         "tabs"
     ],
     "browser_action": {
-        "default_icon": "assets/icon.png",
+        "default_icon": {                    // optional
+            "19": "assets/19.png",           // optional
+            "38": "assets/38.png"            // optional
+          },
         "default_popup": "assets/popup.html"
+    },
+    "icons": {
+        "16": "assets/16.png",
+        "48": "assets/48.png",
+        "128": "assets/128.png"
     },
     "omnibox": { "keyword" : "f" },
     "options_page": "assets/preferences.html",
