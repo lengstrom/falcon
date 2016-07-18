@@ -18,4 +18,5 @@ a.delete {
 a.delete:hover {
     color: #FFF;
     background-color: #D00;
+    cursor:pointer;
 }
