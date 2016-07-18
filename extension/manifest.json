@@ -18,9 +18,9 @@
         "tabs"
     ],
     "browser_action": {
-        "default_icon": {                    // optional
-            "19": "assets/19.png",           // optional
-            "38": "assets/38.png"            // optional
+        "default_icon": {
+            "19": "assets/19.png",
+            "38": "assets/38.png"
           },
         "default_popup": "assets/popup.html"
     },
