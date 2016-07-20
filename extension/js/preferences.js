@@ -39,7 +39,7 @@
                 }
             }
         } else {
-            add("PAGE", "google\.(com|ca|es|fr)");
+            add("PAGE", "google\\.(com|ca|es|fr)");
         }
     });
         
