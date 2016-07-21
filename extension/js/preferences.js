@@ -39,7 +39,8 @@
                 }
             }
         } else {
-            add("PAGE", "google\.(com|ca|es|fr)");
+            add("REGEX", "google\\.(com|ca|es|fr)");
+            add("SITE", "chrome-ui://newtab")
         }
     });
         
