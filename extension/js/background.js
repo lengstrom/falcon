@@ -11,8 +11,6 @@ var GT_OBJ = function(a,b) {
     return a.time > b.time;
 }
 
-var MIN_KEYWORD_LEN = 3;
-
 Array.max = function( array ){
     return Math.max.apply(Math,array);
 };
@@ -273,11 +271,6 @@ function dispatchSuggestions(text, cb, suggestCb) {
     query.text = text;
     if (query.before !== false && query.after !== false && query.after >= query.before) return;
 
-    if (Array.max(query.keywords.map(function(x){return x.length})) < MIN_KEYWORD_LEN) {
-        return;
-    }
-
-    query.keywords = query.keywords.filter(function(x) {return x.length >= MIN_KEYWORD_LEN});
     query.keywords.sort(function(a,b){return b.length-a.length});
 
     if (query.after >= CUTOFF_DATE) {
