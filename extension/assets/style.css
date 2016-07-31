@@ -20,3 +20,7 @@ a.delete:hover {
     background-color: #D00;
     cursor:pointer;
 }
+
+#clear {
+    margin-bottom: 30px;
+}

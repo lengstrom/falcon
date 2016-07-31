@@ -1,6 +1,8 @@
 (function() {
+    var allPageDisplay = null;
+    
     var add = function(type, content) {
-        var tab = document.getElementById("table")
+        var tab = document.getElementById("blacklist_tbl")
         var row = tab.insertRow()
         var stringCell = row.insertCell()
         stringCell.innerHTML = content ? content : ""
@@ -28,10 +30,54 @@
         enabledCell.appendChild(deleteThisCell);
     }
     
+    function cutString(stringToCut) {
+        if (stringToCut.length == 0)
+            return "<em>No title</em>"
+        if (stringToCut.length <= 50)
+            return stringToCut
+        return stringToCut.slice(0, 50) + "..."
+    }
+    
+    function addHistoricPages(pages) {
+        var history_table = document.getElementById("history_tbl")
+        for(i in pages) {
+            var thisRow = document.createElement("tr")
+            thisRow.innerHTML = "<tr><td>" + cutString(pages[i].title) + "</td><td>" + cutString(pages[i].url) + "</td></tr>"
+            var deletePage = document.createElement("td")
+            var deleteButton = document.createElement("a")
+            deleteButton.classList = ["delete"];
+            deleteButton.innerHTML = "Delete"
+            deleteButton.onclick = function(e) {
+                var r = e.target.parentElement.parentElement
+                r.parentNode.removeChild(r)
+            }
+            deletePage.appendChild(deleteButton)
+            thisRow.appendChild(deletePage)
+            thisRow.id = pages[i].time;
+            history_table.appendChild(thisRow)        
+        }
+    }
+    
+    chrome.storage.local.get(function(results) {
+        var allPages = []
+        for (key in results) {
+            if (!isNaN(key)) {
+                allPages.push(results[key])
+            }
+        }
+        allPageDisplay = nextPages(allPages)
+        addHistoricPages(allPageDisplay.next().value)
+    })
+    
+    function* nextPages(allPages){
+        while(true)
+            yield allPages.splice(0, 20)
+    }
+    
     chrome.storage.local.get('blacklist', function(result) {
         var bl = result.blacklist
-        if (bl['SITE'].length + bl['PAGE'].length + bl['REGEX'].length > 0) {
-            var tab = document.getElementById("table")
+        if (bl.length > 0 && (bl['SITE'].length + bl['PAGE'].length + bl['REGEX'].length > 0)) {
+            var tab = document.getElementById("blacklist_tbl")
             var fields = ["SITE", "PAGE", "REGEX"]
             for (var j = 0; j < fields.length; j++) {
                 for (var i = 0; i < bl[fields[j]].length; i++) {
@@ -40,12 +86,14 @@
             }
         } else {
             add("REGEX", "google\\.(com|ca|es|fr)");
-            add("SITE", "chrome-ui://newtab")
+            add("SITE", "chrome-ui://newtab");
+            save();
         }
     });
         
-    document.getElementById("save").onclick = function() {
-        var tab = document.getElementById("table");
+    function save() {
+        notie.alert(4, "Saved Preferences.", 2)
+        var tab = document.getElementById("blacklist_tbl");
         var indices = [];
         for (var i = 1; i < tab.rows.length; i++) {
             var row = tab.rows[i]
@@ -83,11 +131,27 @@
         }
     }
     
-    document.getElementById("add").onclick = add;
-    
-    document.getElementById("clear").onclick = function () {
-        chrome.storage.local.clear()
-        chrome.runtime.reload();
+    function loadMore() {
+        addHistoricPages(allPageDisplay.next().value)
     }
+    
+    function clearAllData() {
+        chrome.storage.local.clear();
+        notie.alert(1, 'Deleted. Restarting Falcon...', 2)
+        setTimeout(function() {
+            chrome.runtime.reload()
+        }, 2000);    
+    }
+    
+    document.getElementById("save").onclick = save;
+    document.getElementById("add").onclick = add;
+    document.getElementById("loadmore").onclick = loadMore;
+    
+    document.getElementById("clear").onclick = function() {
+            notie.confirm('Are you sure you want to do that?', 'Yes', 'Cancel', function() {
+                clearAllData()
+            })
+    }
+
     
 })();
