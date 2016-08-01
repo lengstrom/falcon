@@ -49,6 +49,8 @@
             deleteButton.innerHTML = "Delete"
             deleteButton.onclick = function(e) {
                 var r = e.target.parentElement.parentElement
+                chrome.storage.local.remove(r.id)
+                notie.alert(4, "Page deleted.", 2)
                 r.parentNode.removeChild(r)
             }
             deletePage.appendChild(deleteButton)
