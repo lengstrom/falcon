@@ -1,6 +1,6 @@
 # Falcon
 
-Quick, flexible full text browsing history search in Chrome. Press `f` in the omnibar to activate!
+Flexible full text browsing history search in Chrome. Press `f` in the omnibar to start searching!
 
 ## Examples
 
@@ -16,6 +16,8 @@ Quick, flexible full text browsing history search in Chrome. Press `f` in the om
 `ethereum medium after:11/29/2015 before:3/26/2016` 
 - Searches for websites you visited between 11/29/2015 and 3/26/2016 containing the keywords "ethereum" and "medium"
 
+## Secure install
+If you don't feel comfortable installing a Chrome extension that can read and modify all data on the websites you visit from the webstore (we wouldn't either!), you can clone it on your local machine, read through our code to verify that it is not malicious, and then install it as an unpacked local extension through the menu in `chrome://extensions/`.
 
 ## More Details
 - Use `before:date` and `after:date` to search your history in a certain time range
