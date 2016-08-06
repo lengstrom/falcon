@@ -60,16 +60,22 @@
         }
     }
     
-    chrome.storage.local.get(function(results) {
-        var allPages = []
-        for (key in results) {
-            if (!isNaN(key)) {
-                allPages.push(results[key])
+    
+    function getHistory(query="") {
+        var history_table = document.getElementById("history_tbl")
+        history_table.innerHTML = "<table class='ui table' id='history_tbl'></table>"
+        chrome.storage.local.get(function(results) {
+            var allPages = []
+            for (key in results) {
+                if (!isNaN(key) && (results[key].url + "/" + results[key].title).indexOf(query) > -1) {
+                    allPages.push(results[key])
+                }
             }
-        }
-        allPageDisplay = nextPages(allPages)
-        addHistoricPages(allPageDisplay.next().value)
-    })
+            allPageDisplay = nextPages(allPages)
+            addHistoricPages(allPageDisplay.next().value)
+        })
+    }
+
     
     function* nextPages(allPages){
         while(true)
@@ -145,6 +151,7 @@
         }, 2000);    
     }
     
+    getHistory()
     document.getElementById("save").onclick = save;
     document.getElementById("add").onclick = add;
     document.getElementById("loadmore").onclick = loadMore;
@@ -153,6 +160,10 @@
             notie.confirm('Are you sure you want to do that?', 'Yes', 'Cancel', function() {
                 clearAllData()
             })
+    }
+    
+    document.getElementById("search_history").onkeyup = function () {
+        getHistory(document.getElementById("search_history").value);
     }
 
     
