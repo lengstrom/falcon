@@ -71,6 +71,7 @@
                     allPages.push(results[key])
                 }
             }
+            allPages.reverse()
             allPageDisplay = nextPages(allPages)
             addHistoricPages(allPageDisplay.next().value)
         })
