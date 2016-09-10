@@ -15,12 +15,30 @@ Array.max = function( array ){
     return Math.max.apply(Math,array);
 };
 
+function ValidURL(str) {
+  var pattern = new RegExp('^(https?:\/\/)?'+ // protocol
+    '((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|'+ // domain name
+    '((\d{1,3}\.){3}\d{1,3}))'+ // OR ip (v4) address
+    '(\:\d+)?(\/[-a-z\d%_.~+]*)*'+ // port and path
+    '(\?[;&a-z\d%_.~+=-]*)?'+ // query string
+    '(\#[-a-z\d_]*)?$','i'); // fragment locater
+  if(!pattern.test(str)) {
+    alert("Please enter a valid URL.");
+    return false;
+  } else {
+    return true;
+  }
+}
+
 chrome.omnibox.onInputChanged.addListener(omnibarHandler);
 chrome.omnibox.onInputEntered.addListener(acceptInput);
 chrome.runtime.onMessage.addListener(handleMessage);
 
 function acceptInput(text, disposition) {
     // disposition: "currentTab", "newForegroundTab", or "newBackgroundTab"
+    if (!ValidURL(text)) {
+        return;
+    }
     switch (disposition) {
     case "currentTab":
         chrome.tabs.update({url: text});
@@ -169,7 +187,11 @@ function suggestionsComplete(suggestions, shouldDate, suggestCb) {
         res.push({content:elem.url, description:description});
         console.log(elem.url);
     }
-
+    if (res.length > 0) {
+        chrome.omnibox.setDefaultSuggestion({description: "Select an option below"});
+    } else {
+        chrome.omnibox.setDefaultSuggestion({description: "No results found"})
+    }
     suggestCb(res);
     window.setTimeout(clearCache, CLEAR_DELAY);
 }
