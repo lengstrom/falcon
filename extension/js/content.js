@@ -9,7 +9,7 @@ window.setTimeout((function(){
         if (!relText) {
             relText = document.body.innerText
         }
-    }*/
+        }*/
     chrome.runtime.sendMessage({
         "msg":'pageContent',
         "time":epochTime,
@@ -17,4 +17,4 @@ window.setTimeout((function(){
         "text":document.body.innerText, //relText,
         "title":document.title,
     });
-}), 500);
+}), 1000);
