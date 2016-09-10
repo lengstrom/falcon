@@ -2,6 +2,8 @@
 
 Flexible full text browsing history search in Chrome. Press `f` in the omnibar to start searching!
 
+![Example Usage](Falcon.gif "Example Usage")
+
 ## Examples
 
 `before: "yesterday at 5pm" after: "three weeks ago" emscripten blog "anish athalye"` 
