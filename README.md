@@ -1,6 +1,6 @@
 # Falcon
 
-Flexible full text browsing history search in Chrome. Press `f`, then `space` or `tab`, in the omnibar to start searching your previously visited websites! Every time you visit a website in Chrome, Falcon indexes all the text on the page so that the site can be easily found later. [Install from the Chrome store here](https://chrome.google.com/webstore/detail/falcon/mmifbbohghecjloeklpbinkjpbplfalb)!
+Flexible full text browsing history search in Chrome. Press `f`, then `space` or `tab`, in the omnibar to start searching your previously visited websites! Every time you visit a website in Chrome, Falcon indexes all the text on the page so that the site can be easily found later. [Install from the Chrome store here](https://chrome.google.com/webstore/detail/falcon/mmifbbohghecjloeklpbinkjpbplfalb)! (If you don't feel comfortable with that, look at [Transparent Installation](#transparent-installation))
 
 <img src="Falcon.gif" alt="Example Usage" width="880px"/>
 
@@ -18,7 +18,7 @@ Flexible full text browsing history search in Chrome. Press `f`, then `space` or
 `ethereum medium after:11/29/2015 before:3/26/2016` 
 - Searches for websites you visited between 11/29/2015 and 3/26/2016 containing the keywords "ethereum" and "medium"
 
-## More Secure Installation
+## Transparent Installation
 If you don't feel comfortable installing a Chrome extension that can read and modify all data on the websites you visit from the webstore (we wouldn't either!), you can clone it on your local machine, read through our code to verify that it is not malicious, and then install it as an unpacked local extension through the menu in `chrome://extensions/`. This way you also won't receive any automatic updates, as well. 
 
 ## Preferences Page
