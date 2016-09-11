@@ -1,6 +1,6 @@
 # Falcon
 
-Flexible full text browsing history search in Chrome. Press `f` in the omnibar to start searching! Every time you visit a website in Chrome, Falcon indexes all the text on the page so that the site can be easily found later.
+Flexible full text browsing history search in Chrome. Press `f`, then `space` or `tab`, in the omnibar to start searching! Every time you visit a website in Chrome, Falcon indexes all the text on the page so that the site can be easily found later.
 
 <img src="Falcon.gif" alt="Example Usage" width="880px"/>
 
