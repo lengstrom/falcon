@@ -28,7 +28,6 @@ To manage which URLs Falcon can index, delete websites from the index, and more,
 
 ## More Details
 - Use `before:date` and `after:date` to search your history in a certain time range
-  - In particular you can use natural language (if multiple words, surrounded by quotes to specify dates), e.g. `before:"yesterday at 5pm"`
+  - You can use natural language along with quotes to specify dates as well, e.g. `before:"yesterday at 5pm"`
 - Use quotations to look for exact matches of strings containing whitespace
-- Only documents containing all words will be searched
-- Keywords shorter than 3 characters are ignored
+- Only documents containing all words will be returned
