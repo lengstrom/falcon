@@ -9,7 +9,7 @@ Chrome extension for flexible full text browsing history search. Press `f`, then
 `before: "yesterday at 5pm" after: "three weeks ago" emscripten blog "anish athalye"` 
 - Searches for websites that you browsed between yesterday at 5pm and 3 weeks ago containing the keywords "emscripten" and "blog" and "anish athalye"
 
-`-'cat food' just 'a dog'`
+`-"cat food" just "a dog"`
 - Searches for websites you visited containing the keywords "just" and "a dog", and without the phrase "cat food".
 
 `ethereum medium` 
