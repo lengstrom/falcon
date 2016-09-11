@@ -26,6 +26,10 @@ To manage which URLs Falcon can index, delete websites from the index, and more,
 
 !["Extension Bar"](http://i.imgur.com/w6cdWsc.png "Extension Bar")
 
+## FAQ
+### "Will this index my bank statements?"
+Nope! We have a blacklist of domains to avoid indexing that includes the majority of banking websites. You can edit them and add your own in the preferences page! If you accidentally visit a page that is indexed that you don't want indexed, you can go into preferences and delete it from your indexed pages. 
+
 ## More Details
 - Use `before:date` and `after:date` to search your history in a certain time range
   - You can use natural language along with quotes to specify dates as well, e.g. `before:"yesterday at 5pm"`
