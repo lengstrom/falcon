@@ -2,7 +2,7 @@
 
 Flexible full text browsing history search in Chrome. Press `f` in the omnibar to start searching!
 
-![Example Usage](Falcon.gif "Example Usage")
+<img src="Falcon.gif" alt="Example Usage" width="880px"/>
 
 ## Examples
 
