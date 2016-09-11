@@ -95,12 +95,13 @@
             }
         } else {
             add("SITE", "chrome-ui://newtab");
-            save();
+            save(false);
         }
     });
         
-    function save() {
-        notie.alert(4, "Saved Preferences.", 2)
+    function save(showAlert) {
+        var showAlert = (typeof showAlert !== 'undefined') ?  showAlert : true;
+        if (showAlert) { notie.alert(4, "Saved Preferences.", 2); }
         var tab = document.getElementById("blacklist_tbl");
         var indices = [];
         for (var i = 1; i < tab.rows.length; i++) {
