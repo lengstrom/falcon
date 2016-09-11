@@ -119,7 +119,6 @@ function handleMessage(data, sender, sendRespones) {
     if (data.msg === 'pageContent' && shouldArchive(data)) {
         delete data.msg;
         data.text = processPageText(data.text);
-        console.log(data.url + " :: " + data.text)
         var time = data.time;
         var keyValue = {};
         keyValue[time] = data;
@@ -180,7 +179,6 @@ function suggestionsComplete(suggestions, shouldDate, suggestCb) {
  
         description += '- ' + escape(elem.title);
         res.push({content:elem.url, description:description});
-        console.log(elem.url);
     }
     if (res.length > 0) {
         chrome.omnibox.setDefaultSuggestion({description: "Select an option below"});
