@@ -31,7 +31,7 @@ To manage which URLs Falcon can index, delete websites from the index, and more,
 Nope! We have a blacklist of domains to avoid indexing that includes the majority of banking websites. You can edit them and add your own in the preferences page! If you accidentally visit a page that is indexed that you don't want indexed, you can go into preferences and delete it from your indexed pages. 
 
 ### "Do you store any information remotely?"
-No, all information is stored locally!
+No, all information is stored locally! No data leaves your computer over the network.
 
 ## More Details
 - Use `before:date` and `after:date` to search your history in a certain time range
