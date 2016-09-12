@@ -14445,6 +14445,7 @@ DEFAULT_BLACKLIST=[
 "umoo.com",
 "unionsecuritiescommodityfutures.com",
 "usa-stocks.de",
+"usaa.com",
 "utradeph.com",
 "vanguard.com",
 "virtualstockexchange.com",
