@@ -85,7 +85,7 @@
     
     chrome.storage.local.get('blacklist', function(result) {
         var bl = result.blacklist
-        if (bl.length > 0 && (bl['SITE'].length + bl['PAGE'].length + bl['REGEX'].length > 0)) {
+        if (Object.keys(bl).length > 0 && (bl['SITE'].length + bl['PAGE'].length + bl['REGEX'].length > 0)) {
             var tab = document.getElementById("blacklist_tbl")
             var fields = ["SITE", "PAGE", "REGEX"]
             for (var j = 0; j < fields.length; j++) {
