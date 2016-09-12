@@ -158,7 +158,7 @@ function suggestionsComplete(suggestions, shouldDate, suggestCb) {
         if (hour > 12) {
             hour -= 12;
             if (hour === 12) {
-                horu = hour.toString + 'am';
+                hour = hour.toString + 'am';
             } else {
                 hour = hour.toString() + "pm";
             }
