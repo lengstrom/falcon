@@ -3,7 +3,7 @@
     "name": "Falcon",
     "short_name":"Falcon",
     "description": "To activate, type 'f' followed by a tab or space into the Omnibox. Then enter your term and press enter to submit.",
-    "version": "0.1",
+    "version": "0.1.1",
     "content_scripts": [
         {
             "matches": [
