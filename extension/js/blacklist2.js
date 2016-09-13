@@ -3811,6 +3811,7 @@ DEFAULT_BLACKLIST=[
 "skjernbank.dk",
 "skmb.de",
 "sk-neuwied.de",
+"sk-westerwald-sieg.de",
 "skodabank.com",
 "skodabank.de",
 "skschwyz.ch",
