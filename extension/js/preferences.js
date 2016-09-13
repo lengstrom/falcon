@@ -42,7 +42,12 @@
         var history_table = document.getElementById("history_tbl")
         for(i in pages) {
             var thisRow = document.createElement("tr")
-            thisRow.innerHTML = "<tr><td>" + cutString(pages[i].title) + "</td><td>" + cutString(pages[i].url) + "</td></tr>"
+            var colOne = document.createElement("td")
+            colOne.innerText =  cutString(pages[i].title) 
+            var colTwo = document.createElement("td")
+            colTwo.innerText = cutString(pages[i].url)
+            thisRow.appendChild(colOne)
+            thisRow.appendChild(colTwo)
             var deletePage = document.createElement("td")
             var deleteButton = document.createElement("a")
             deleteButton.classList = ["delete"];
