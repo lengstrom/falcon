@@ -1,6 +1,6 @@
 (function() {
     var allPageDisplay = null;
-    
+
     var add = function(type, content) {
         var tab = document.getElementById("blacklist_tbl")
         var row = tab.insertRow()
@@ -8,16 +8,16 @@
         stringCell.innerHTML = content ? content : ""
         stringCell.contentEditable = true
         stringCell.setAttribute("placeholder", "Add a site...");
-        
+
         var typeCell = row.insertCell()
         var selectCell = document.createElement('select');
         selectCell.innerHTML = '<option value="PAGE">Specific Page</option> \
                         <option value="SITE">Entire Website</option> \
                         <option value="REGEX">Regex</option>'
         selectCell.value = type
-        
+
         typeCell.appendChild(selectCell);
-                    
+
         var enabledCell = row.insertCell()
         enabledCell.innerHTML = "<input type='checkbox' checked></input>"
         var deleteThisCell = document.createElement("a");
@@ -29,7 +29,7 @@
         }
         enabledCell.appendChild(deleteThisCell);
     }
-    
+
     function cutString(stringToCut) {
         if (stringToCut.length == 0)
             return "<em>No title</em>"
@@ -37,7 +37,7 @@
             return stringToCut
         return stringToCut.slice(0, 50) + "..."
     }
-    
+
     function addHistoricPages(pages) {
         var history_table = document.getElementById("history_tbl")
         for(i in pages) {
@@ -56,11 +56,11 @@
             deletePage.appendChild(deleteButton)
             thisRow.appendChild(deletePage)
             thisRow.id = pages[i].time;
-            history_table.appendChild(thisRow)        
+            history_table.appendChild(thisRow)
         }
     }
-    
-    
+
+
     function getHistory(query="") {
         var history_table = document.getElementById("history_tbl")
         history_table.innerHTML = "<table class='ui table' id='history_tbl'></table>"
@@ -77,12 +77,12 @@
         })
     }
 
-    
+
     function* nextPages(allPages){
         while(true)
             yield allPages.splice(0, 20)
     }
-    
+
     chrome.storage.local.get('blacklist', function(result) {
         var bl = result.blacklist
         if (Object.keys(bl).length > 0 && (bl['SITE'].length + bl['PAGE'].length + bl['REGEX'].length > 0)) {
@@ -98,7 +98,7 @@
             save(false);
         }
     });
-        
+
     function save(showAlert) {
         var showAlert = (typeof showAlert !== 'undefined') ?  showAlert : true;
         if (showAlert) { notie.alert(4, "Saved Preferences.", 2); }
@@ -110,13 +110,13 @@
                 indices.push(i)
             }
         }
-        
+
         for (var j = indices.length-1; j > -1; j--) {
             tab.deleteRow(indices[j]);
         }
-        
-        
-        
+
+
+
         if (tab.rows.length == 1) {
             chrome.runtime.sendMessage({
                 "msg": 'setBlacklist',
@@ -132,40 +132,40 @@
             for(var i = 1; i < tab.rows.length; i++) {
                 b[tab.rows[i].cells[1].childNodes[0].value].push(tab.rows[i].cells[0].innerText)
             }
-            
+
             chrome.runtime.sendMessage({
                 "msg": 'setBlacklist',
                 "blacklist": b
             })
         }
     }
-    
+
     function loadMore() {
         addHistoricPages(allPageDisplay.next().value)
     }
-    
+
     function clearAllData() {
         chrome.storage.local.clear();
         notie.alert(1, 'Deleted. Restarting Falcon...', 2)
         setTimeout(function() {
             chrome.runtime.reload()
-        }, 2000);    
+        }, 2000);
     }
-    
+
     getHistory()
     document.getElementById("save").onclick = save;
     document.getElementById("add").onclick = add;
     document.getElementById("loadmore").onclick = loadMore;
-    
+
     document.getElementById("clear").onclick = function() {
             notie.confirm('Are you sure you want to do that?', 'Yes', 'Cancel', function() {
                 clearAllData()
             })
     }
-    
+
     document.getElementById("search_history").onkeyup = function () {
         getHistory(document.getElementById("search_history").value);
     }
 
-    
+
 })();
