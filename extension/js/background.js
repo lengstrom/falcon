@@ -23,10 +23,6 @@ function ValidURL(text) {
 chrome.omnibox.onInputChanged.addListener(omnibarHandler);
 chrome.omnibox.onInputEntered.addListener(acceptInput);
 chrome.runtime.onMessage.addListener(handleMessage);
-chrome.runtime.onInstalled.addListener(function (object) {
-    chrome.tabs.create({url: "https://github.com/lengstrom/falcon"}, function (tab) {
-        });
-});
 
 function acceptInput(text, disposition) {
     // disposition: "currentTab", "newForegroundTab", or "newBackgroundTab"
