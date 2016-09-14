@@ -14460,5 +14460,7 @@ DEFAULT_BLACKLIST=[
 "world-exchanges.org",
 "worldlinkfutures.com",
 "wselive.com",
-"yamstock.megatime.com.tw"
+"yamstock.megatime.com.tw",
+"etoro.com",
+"fintonic.com"
 ];
