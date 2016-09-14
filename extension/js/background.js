@@ -24,8 +24,13 @@ chrome.omnibox.onInputChanged.addListener(omnibarHandler);
 chrome.omnibox.onInputEntered.addListener(acceptInput);
 chrome.runtime.onMessage.addListener(handleMessage);
 chrome.runtime.onInstalled.addListener(function (object) {
-    chrome.tabs.create({url: "https://github.com/lengstrom/falcon"}, function (tab) {
-        });
+    chrome.storage.local.get("shouldOpenTab", function(item) {
+        if (Object.keys(item).length == 0) {
+            chrome.tabs.create({url: "https://github.com/lengstrom/falcon"}, function (tab) {
+            });
+            chrome.storage.local.set({"shouldOpenTab": {"dontShow": true}})
+        }
+    })
 });
 
 function acceptInput(text, disposition) {
