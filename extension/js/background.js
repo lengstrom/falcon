@@ -27,21 +27,6 @@ chrome.runtime.onInstalled.addListener(function (object) {
     chrome.tabs.create({url: "https://github.com/lengstrom/falcon"}, function (tab) {
         });
 });
-chrome.tabs.onUpdated.addListener(toggleQuickBlacklist);
-
-function toggleQuickBlacklist(tabId, changeInfo, tab) {
-    chrome.storage.local.get(['blacklist'], function(items) {
-        var tabUrl = tab.url;
-        var blacklist = items['blacklist'];
-        var quickBlacklist = document.getElementById('quick-blacklist');
-        if(blacklist['SITE'].includes(tabUrl)){
-            quickBlacklist.classList.add('disabled');
-        }
-        else{
-            quickBlacklist.classList.remove('disabled');
-        }
-    });
-};
 
 function acceptInput(text, disposition) {
     // disposition: "currentTab", "newForegroundTab", or "newBackgroundTab"
