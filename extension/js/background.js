@@ -62,7 +62,7 @@ function init() {
         } else {
             window.blacklist = obj;
         }
-        
+
         var obj = items['preferences'];
         if (obj === undefined) {
             window.preferences = {};
@@ -143,7 +143,6 @@ function handleMessage(data, sender, sendRespones) {
     }
 }
 
-
 function omnibarHandler(text, suggest) {
     dispatchSuggestions(text, suggestionsComplete, suggest);
 }
@@ -174,14 +173,14 @@ function suggestionsComplete(suggestions, shouldDate, suggestCb) {
                 hour = hour.toString() + "am";
             }
         }
-        
+
         var fmt =  (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getUTCFullYear().toString().substring(2,4);
         if (shouldDate) {
             description += ':: <match>' + escape(fmt + " " + hour) + '</match> ';
         } else {
             description += ':: ' + escape(fmt) + ' ';
         }
- 
+
         description += '- ' + escape(elem.title);
         res.push({content:elem.url, description:description});
     }
@@ -197,11 +196,11 @@ function suggestionsComplete(suggestions, shouldDate, suggestCb) {
 function clearCache() {
     return;
     var now = +(new Date());
-    
+
     for (var time in cache) {
         if (now - parseInt(time) > MILLIS_BEFORE_CLEAR) {
             delete cache[time];
-        } 
+        }
     }
 }
 
@@ -209,7 +208,6 @@ function escapeRegExp(str) {
     return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 }
 
-// shouldArchive
 function shouldArchive(data) {
     // blacklist =  {"REGEX", "PAGE", "SITE"}
     // custom / regex, DEFAULT_BLACKLIST
@@ -323,7 +321,7 @@ function dispatchSuggestions(text, cb, suggestCb) {
             sorted = preloaded.slice(0, get.length - index + 1);
         }
         get = get.slice(0,index);
-        
+
         chrome.storage.local.get(get, function(items) {
             for (var key in items) {
                 sorted.push(items[key]);
@@ -338,7 +336,7 @@ function binarySearch(arr, value, lt, gt, i, j) {
     if (Math.abs(j - i) <= 1) {
         return (i + j)/2;
     }
-    
+
     var m = Math.floor((i + j)/2)
     var cmpVal = arr[m];
     if (gt(cmpVal, value)) {
