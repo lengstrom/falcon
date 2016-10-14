@@ -65,7 +65,6 @@
         }
     }
 
-
     function getHistory(query="") {
         var history_table = document.getElementById("history_tbl")
         history_table.innerHTML = "<table class='ui table' id='history_tbl'></table>"
@@ -81,7 +80,6 @@
             addHistoricPages(allPageDisplay.next().value)
         })
     }
-
 
     function* nextPages(allPages){
         while(true)
@@ -151,26 +149,64 @@
 
     function clearAllData() {
         chrome.storage.local.clear();
-        notie.alert(1, 'Deleted. Restarting Falcon...', 2)
+        notie.alert(1, 'Deleted All Data. Restarting Falcon...', 2)
+        setTimeout(function() {
+            chrome.runtime.reload()
+        }, 2000);
+    }
+
+    function clearRules() {
+        chrome.storage.local.get(['blacklist'], function(items) {
+            var blacklist = items['blacklist'];
+            blacklist['SITE'] = ['chrome-ui://newtab']
+            chrome.storage.local.set({'blacklist':blacklist});
+        });
+        notie.alert(1, 'Deleted Rules. Restarting Falcon...', 2)
+        setTimeout(function() {
+            chrome.runtime.reload()
+        }, 2000);
+    }
+
+    function clearHistory() {
+        chrome.storage.local.get(function(results) {
+            var timestaps = results['index']['index'];
+            for(key in timestaps){
+                chrome.storage.local.remove(timestaps[key]);
+            }
+            chrome.storage.local.set({'index':{'index':[]}});
+        });
+        notie.alert(1, 'Deleted History. Restarting Falcon...', 2)
         setTimeout(function() {
             chrome.runtime.reload()
         }, 2000);
     }
 
     getHistory()
+
     document.getElementById("save").onclick = save;
     document.getElementById("add").onclick = add;
     document.getElementById("loadmore").onclick = loadMore;
 
-    document.getElementById("clear").onclick = function() {
-            notie.confirm('Are you sure you want to do that?', 'Yes', 'Cancel', function() {
-                clearAllData()
-            })
+    document.getElementById("clear").onclick = function () {
+        notie.confirm('Are you sure you want to do that?', 'Yes', 'Cancel', function() {
+            clearAllData();
+        });
+    }
+
+    document.getElementById("clear-rules").onclick = function () {
+        notie.confirm('Are you sure you want to do that?', 'Yes', 'Cancel', function() {
+            clearRules();
+        });
+    }
+
+    document.getElementById("clear-history").onclick = function () {
+        notie.confirm('Are you sure you want to do that?', 'Yes', 'Cancel', function() {
+            clearHistory();
+        });
     }
 
     document.getElementById("search_history").onkeyup = function () {
         getHistory(document.getElementById("search_history").value);
     }
-
 
 })();
