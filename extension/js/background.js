@@ -119,7 +119,7 @@ function assert(condition, message) {
     }
 }
 
-function handleMessage(data, sender, sendRespones) {
+function handleMessage(data, sender, sendResponse) {
     // data is from message
     if (data.msg === 'pageContent' && shouldArchive(data)) {
         delete data.msg;
