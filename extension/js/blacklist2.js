@@ -4011,7 +4011,7 @@ DEFAULT_BLACKLIST=[
 "sparkasse.it",
 "sparkasse-jerichower-land.de",
 "sparkasse-ka.de",
-"sparkasse-karlsruhe-ettlingen.de"
+"sparkasse-karlsruhe-ettlingen.de",
 "sparkasse-kamen.de",
 "sparkasse-kaufbeuren.de",
 "sparkasse-kehl.de",
