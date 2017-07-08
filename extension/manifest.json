@@ -1,8 +1,9 @@
 {
     "manifest_version": 2,
     "name": "Falcon",
+    "short_name":"Falcon",
     "description": "To activate, type 'f' followed by a tab or space into the Omnibox. Then enter your term and press enter to submit.",
-    "version": "0.1",
+    "version": "0.2.4",
     "content_scripts": [
         {
             "matches": [
@@ -14,12 +15,23 @@
     "permissions": [
         "unlimitedStorage",
         "<all_urls>",
-        "storage"
+        "storage",
+        "tabs"
     ],
     "browser_action": {
-        "default_icon": "icon.png"
+        "default_icon": {
+            "19": "assets/19.png",
+            "38": "assets/38.png"
+          },
+        "default_popup": "assets/popup.html"
+    },
+    "icons": {
+        "16": "assets/16.png",
+        "48": "assets/48.png",
+        "128": "assets/128.png"
     },
     "omnibox": { "keyword" : "f" },
+    "options_page": "assets/preferences.html",
     "background": {
         "scripts": ["js/blacklist2.js", "js/lib/chrono.min.js", "js/textprocessing.js", "js/queryparser.js", "js/background.js"]
     }

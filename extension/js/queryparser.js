@@ -18,7 +18,7 @@ function extractTextBtwChars(i, text) { // i is index of first char
     if (next > -1) {
         matched = text.substring(i+1, next);
         text = text.substring(0,i) + " " + text.substring(next+1, text.length);
-    } else if (ch == ' ') {
+    } else if (ch === ' ') {
         matched = text.substring(i+1, text.length);
         text = text.substring(0,i);
     }
@@ -36,17 +36,17 @@ function getArgumentForRegex(text, regex) {
     var i = 0;
     while (i < textLen) {
         var ch = text[i];
-        if (currQuote == false) {
+        if (currQuote === false) {
             if (ch.match(QUOTEREGEX) != null) {
                 currQuote = ch;
             }
         } else {
-            if (ch == currQuote) {
+            if (ch === currQuote) {
                 currQuote = false;
             }
         }
 
-        quoteMap[i] = currQuote == false ? 0 : 1;
+        quoteMap[i] = currQuote === false ? 0 : 1;
         i += 1;
     }
 
@@ -59,17 +59,17 @@ function getArgumentForRegex(text, regex) {
         pos = 0;
     }
 
-    while (res != null && quoteMap[pos] == 1) {
+    while (res !== null && quoteMap[pos] === 1) {
         offset += res.index + res.length;
         res = text.substring(offset+1,text.length).match(regex);
         pos = res.index + 1 + offset
     }
 
-    if (res == null) return [false, false];
+    if (res === null) return [false, false];
     if (offset > 0) res.index += offset + 1;
 
     var i = res.index + res[0].length;
-    while (text[i] == ' ') {i += 1};
+    while (text[i] === ' ') {i += 1};
     if (i >= textLen) {
         return [false, false];
     }
@@ -80,7 +80,7 @@ function getArgumentForRegex(text, regex) {
         var [matched, text] = extractTextBtwChars(i-1, text);
     }
 
-    if (text == false) {
+    if (text === false) {
         return [false, false];
     }
 
@@ -91,11 +91,11 @@ function getArgumentForRegex(text, regex) {
 function getNextQuote(i, text) {
     var p1 = text.indexOf('"',i);
     var p2 = text.indexOf("'",i);
-    if (p1 == -1) {
+    if (p1 === -1) {
         return p2;
     }
 
-    if (p2 == -1) {
+    if (p2 === -1) {
         return p1;
     }
 
@@ -108,7 +108,7 @@ function parseExact(query) {
     var next;
     while (i > -1) {
         var [matched, text] = extractTextBtwChars(i, text);
-        if (text == false) {
+        if (text === false) {
             return query;
         }
 
