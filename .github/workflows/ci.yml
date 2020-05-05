@@ -1,0 +1,32 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Build
+      run: |
+        npm install web-ext
+        cd extension && npm run build
+    - name: Upload document
+      uses: actions/upload-artifact@v2
+      with:
+        name: falcon
+        path: extension/web-ext-artifacts/

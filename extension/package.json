@@ -1,0 +1,9 @@
+{
+    "scripts": {
+      "build": "web-ext build --overwrite-dest"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/lengstrom/falcon.git"
+    }
+  }
