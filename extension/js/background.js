@@ -223,8 +223,9 @@ function shouldArchive(data) {
         }
     }
 
+    page = page.concat(DEFAULT_BLACKLIST);
     for (var i = 0; i < page.length; i++) {
-        if (cleanURL(data.url).indexOf(page[i].replace("http://",  "").replace("https://", ""))) {
+        if (cleanURL(data.url).indexOf(page[i].replace("http://",  "").replace("https://", "")) != -1) {
             return false;
         }
     }
