@@ -1,5 +1,6 @@
 var MILLIS_BEFORE_CLEAR = 1000 * 60; // 60 seconds
 var CLEAR_DELAY = 20000;
+var MAX_URL_LEN_SHOWN = 50;
 var LT = function(a,b) {return a < b};
 var GT = function(a,b) {return a > b};
 var LT_OBJ = function(a,b) {
@@ -10,18 +11,33 @@ var GT_OBJ = function(a,b) {
     return a.time > b.time;
 }
 
-var MIN_KEYWORD_LEN = 3;
-
 Array.max = function( array ){
     return Math.max.apply(Math,array);
 };
 
+function ValidURL(text) {
+    var valid = /((https?):\/\/)?(([w|W]{3}\.)+)?[a-zA-Z0-9\-\.]{3,}\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?/
+    return valid.test(text);
+}
+
 chrome.omnibox.onInputChanged.addListener(omnibarHandler);
 chrome.omnibox.onInputEntered.addListener(acceptInput);
 chrome.runtime.onMessage.addListener(handleMessage);
+chrome.runtime.onInstalled.addListener(function (object) {
+    chrome.storage.local.get("shouldOpenTab", function(item) {
+        if (Object.keys(item).length == 0) {
+            chrome.tabs.create({url: "https://github.com/lengstrom/falcon"}, function (tab) {
+            });
+            chrome.storage.local.set({"shouldOpenTab": {"dontShow": true}})
+        }
+    })
+});
 
 function acceptInput(text, disposition) {
     // disposition: "currentTab", "newForegroundTab", or "newBackgroundTab"
+    if (!ValidURL(text)) {
+        return;
+    }
     switch (disposition) {
     case "currentTab":
         chrome.tabs.update({url: text});
@@ -38,13 +54,21 @@ function acceptInput(text, disposition) {
 function init() {
     window.preloaded = [];
     window.cache = {};
-    chrome.storage.local.get('blacklist', function(items) {
-        var object = items['blacklist'];
-        if (object === undefined) {
-            window.blacklist = {'string':['https://www.google.com/_/chrome/newtab'], 'regex':[]}; // show example in page
+    chrome.storage.local.get(['blacklist', 'preferences'], function(items) {
+        var obj = items['blacklist'];
+        if (obj === undefined || !('PAGE' in obj && 'SITE' in obj && 'REGEX' in obj)) {
+            window.blacklist = {'PAGE':[], 'REGEX':[], 'SITE':[]}; // show example in page
             chrome.storage.local.set({'blacklist':blacklist});
         } else {
-            window.blacklist = object;
+            window.blacklist = obj;
+        }
+
+        var obj = items['preferences'];
+        if (obj === undefined) {
+            window.preferences = {};
+            chrome.storage.local.set({'preferences':preferences});
+        } else {
+            window.preferences = obj;
         }
     });
 
@@ -95,7 +119,7 @@ function assert(condition, message) {
     }
 }
 
-function handleMessage(data, sender, sendRespones) {
+function handleMessage(data, sender, sendResponse) {
     // data is from message
     if (data.msg === 'pageContent' && shouldArchive(data)) {
         delete data.msg;
@@ -110,14 +134,18 @@ function handleMessage(data, sender, sendRespones) {
         timeIndex.push(time.toString());
         preloaded.push(data);
         chrome.storage.local.set({'index':{'index':timeIndex}});
+    } else if (data.msg === 'setPreferences') {
+        preferences = data.preferences;
+        chrome.storage.local.set({'preferences':preferences});
+    } else if (data.msg === 'setBlacklist') {
+        blacklist = data.blacklist;
+        chrome.storage.local.set({'blacklist':blacklist});
     }
 }
 
 function omnibarHandler(text, suggest) {
     dispatchSuggestions(text, suggestionsComplete, suggest);
 }
-
-MAX_URL_LEN_SHOWN = 50;
 
 function suggestionsComplete(suggestions, shouldDate, suggestCb) {
     var res = [];
@@ -133,31 +161,34 @@ function suggestionsComplete(suggestions, shouldDate, suggestCb) {
         var hour = date.getHours();
         if (hour > 12) {
             hour -= 12;
-            if (hour == 12) {
-                horu = hour.toString + 'am';
+            if (hour === 12) {
+                hour = hour.toString + 'am';
             } else {
                 hour = hour.toString() + "pm";
             }
         } else {
-            if (hour == 12) {
+            if (hour === 12) {
                 hour = hour.toString() + "pm";
             } else {
                 hour = hour.toString() + "am";
             }
         }
-        
+
         var fmt =  (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getUTCFullYear().toString().substring(2,4);
         if (shouldDate) {
             description += ':: <match>' + escape(fmt + " " + hour) + '</match> ';
         } else {
             description += ':: ' + escape(fmt) + ' ';
         }
- 
+
         description += '- ' + escape(elem.title);
         res.push({content:elem.url, description:description});
-        console.log(elem.url);
     }
-
+    if (res.length > 0) {
+        chrome.omnibox.setDefaultSuggestion({description: "Select an option below"});
+    } else {
+        chrome.omnibox.setDefaultSuggestion({description: "No results found"})
+    }
     suggestCb(res);
     window.setTimeout(clearCache, CLEAR_DELAY);
 }
@@ -165,26 +196,35 @@ function suggestionsComplete(suggestions, shouldDate, suggestCb) {
 function clearCache() {
     return;
     var now = +(new Date());
-    
+
     for (var time in cache) {
         if (now - parseInt(time) > MILLIS_BEFORE_CLEAR) {
             delete cache[time];
-        } 
+        }
     }
 }
 
+function escapeRegExp(str) {
+    return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+}
+
 function shouldArchive(data) {
+    // blacklist =  {"REGEX", "PAGE", "SITE"}
     // custom / regex, DEFAULT_BLACKLIST
-    var string = blacklist.string;
-    var regex = blacklist.regex;
+    var site = blacklist["SITE"];
+    var page = blacklist["PAGE"];
+    var regex = blacklist["REGEX"];
     var url = data.url;
-    for (var i = 0; i < string.length; i++) {
-        if (url.indexOf(string[i]) > -1) {
+
+    for (var i = 0; i < site.length; i++) {
+        // var reg = new RegExp(escapeRegExp(page[i]) + ".*");
+        if (url.indexOf(site[i].replace("http://",  "").replace("https://", "")) != -1) {
             return false;
         }
     }
-    for (var i = 0; i < DEFAULT_BLACKLIST.length; i++) {
-        if (url.indexOf(DEFAULT_BLACKLIST[i]) > -1) {
+
+    for (var i = 0; i < page.length; i++) {
+        if (cleanURL(data.url).indexOf(page[i].replace("http://",  "").replace("https://", ""))) {
             return false;
         }
     }
@@ -223,18 +263,25 @@ function makeSuggestions(query, candidates, cb, suggestCb) {
                 }
             }
 
-            if (isMatching && !(candidates[i].url in urls)) {
-                res.push(candidates[i]);
-                urls[candidates[i].url] = true;
-                j += 1;
-                if (j === 6) {
-                    break;
+            if (isMatching) {
+                var cleanedURL = cleanURL(candidates[i].url);
+                if (!(cleanedURL in urls)) {
+                    res.push(candidates[i]);
+                    urls[cleanedURL] = true;
+                    j += 1;
+                    if (j === 6) {
+                        break;
+                    }
                 }
             }
         }
     }
 
-    cb(res, query.shouldDate, suggestCb);
+    cb(res,query.shouldDate,suggestCb);
+}
+
+function cleanURL(url) {
+    return url.trim().replace(/(#.+?)$/, '');
 }
 
 function dispatchSuggestions(text, cb, suggestCb) {
@@ -242,11 +289,6 @@ function dispatchSuggestions(text, cb, suggestCb) {
     query.text = text;
     if (query.before !== false && query.after !== false && query.after >= query.before) return;
 
-    if (Array.max(query.keywords.map(function(x){return x.length})) < MIN_KEYWORD_LEN) {
-        return;
-    }
-
-    query.keywords = query.keywords.filter(function(x) {return x.length >= MIN_KEYWORD_LEN});
     query.keywords.sort(function(a,b){return b.length-a.length});
 
     if (query.after >= CUTOFF_DATE) {
@@ -279,7 +321,7 @@ function dispatchSuggestions(text, cb, suggestCb) {
             sorted = preloaded.slice(0, get.length - index + 1);
         }
         get = get.slice(0,index);
-        
+
         chrome.storage.local.get(get, function(items) {
             for (var key in items) {
                 sorted.push(items[key]);
@@ -294,7 +336,7 @@ function binarySearch(arr, value, lt, gt, i, j) {
     if (Math.abs(j - i) <= 1) {
         return (i + j)/2;
     }
-    
+
     var m = Math.floor((i + j)/2)
     var cmpVal = arr[m];
     if (gt(cmpVal, value)) {

@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="semantic.min.css">
+        <link rel="stylesheet" href="notie.css">
+    </head>
+    <body>
+        <h1>Preferences</h1>
+        <hr />
+        <h2>Blacklisted Websites</h2>
+        <h4>Enter any valid regex</h4>
+        <table class="ui table" id="blacklist_tbl">
+            <tr><td>Websites</td><td>Type</td><td>Enabled</td></tr>
+        </table>
+        <button class="ui green button" id="add">Add</button>
+        <button class="ui blue button" id="save">Save</button>
+        <button class="ui red button" id="clear-rules">Clear Rules</button>
+
+        <h2>Falcon History</h2>
+        <div class="ui input">
+            <input type="text" placeholder="Search by title or URL..." id="search_history"></input>
+        </div>
+        <table class="ui table" id="history_tbl">
+        </table>
+        <button class="ui button" id="loadmore">Load more</button>
+        <button class="ui red button" id="clear-history">Clear History</button>
+
+        <h2>Danger Zone!</h2>
+        <button class="ui red button" id="clear">Clear All Data</button>
+
+        <script type="text/javascript" src="../js/lib/notie.min.js"></script>
+        <script type="text/javascript" src="../js/preferences.js"></script>
+    </body>
+</html>

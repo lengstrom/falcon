@@ -1,0 +1,26 @@
+body {
+    padding: 2% 20% !important;
+}
+
+[contenteditable=true]:empty:before {
+  content: attr(placeholder);
+  display: block; /* For Firefox */
+}
+
+a.delete {
+    float: right;
+    padding: 3px 5px;
+    color: #FFF;
+    background-color: #F00;
+    border-radius: 4px;
+}
+
+a.delete:hover {
+    color: #FFF;
+    background-color: #D00;
+    cursor:pointer;
+}
+
+#clear {
+    margin-bottom: 30px;
+}
